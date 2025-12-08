@@ -1,0 +1,21 @@
+<div class="layout-container">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-wrapper">
+    <nav class="top-navbar">
+      <span class="logo"></span>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </nav>
+
+    <div class="page-wrapper">
+      <div class="content-card">
+        <app-loader></app-loader>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>© 2025 Lombard Tools Portal — All Rights Reserved</p>
+    </footer>
+  </div>
+</div>

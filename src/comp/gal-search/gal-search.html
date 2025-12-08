@@ -1,0 +1,174 @@
+<div class="module-card">
+  <h2 class="module-title">📧 GAL Search</h2>
+
+  <div style="display: flex; flex-wrap: wrap">
+    <select [(ngModel)]="parameter" class="text-input">
+      <option [ngValue]="0">Name</option>
+      <option [ngValue]="1">Email</option>
+      <option [ngValue]="2">Department</option>
+      <option [ngValue]="3">Location</option>
+    </select>
+
+    <input [(ngModel)]="value" placeholder="Search value" class="text-input" />
+
+    <button (click)="search()" class="action-btn dark">Search</button>
+  </div>
+
+  <app-alert [message]="message" [type]="alertType"></app-alert>
+
+  <!-- SHOW RESULT ONLY IF results IS NOT NULL -->
+  <div *ngIf="results" class="gal-container">
+    <!-- SECTION 1: GENERAL -->
+    <div class="section">
+      <div class="section-title">General</div>
+
+      <div class="row">
+        <div class="field">
+          <label>First Name :</label><span>{{ results.firstName }}</span>
+        </div>
+        <div class="field">
+          <label>Last Name :</label><span>{{ results.lastName }}</span>
+        </div>
+
+        <div class="field">
+          <label>Grade :</label><span>{{ results.grade }}</span>
+        </div>
+        <div class="field">
+          <label>Initials :</label><span>{{ results.initials }}</span>
+        </div>
+
+        <div class="field">
+          <label>Display :</label><span>{{ results.display }}</span>
+        </div>
+        <div class="field">
+          <label>Known As :</label><span>{{ results.knownAs }}</span>
+        </div>
+
+        <div class="field">
+          <label>WorkStation ID :</label><span>{{ results.workStationID }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: ORGANISATION -->
+    <div class="section">
+      <div class="section-title">Organisation</div>
+
+      <div class="row">
+        <div class="field">
+          <label>Company :</label><span>{{ results.company }}</span>
+        </div>
+        <div class="field">
+          <label>Designation :</label><span>{{ results.designation }}</span>
+        </div>
+
+        <div class="field">
+          <label>Emp No :</label><span>{{ results.empNo }}</span>
+        </div>
+        <div class="field">
+          <label>Group :</label><span>{{ results.group }}</span>
+        </div>
+
+        <div class="field">
+          <label>Location :</label><span>{{ results.location }}</span>
+        </div>
+        <div class="field">
+          <label>Department :</label><span>{{ results.department }}</span>
+        </div>
+
+        <div class="field">
+          <label>Manager :</label><span>{{ results.manager }}</span>
+        </div>
+        <div class="field">
+          <label>Direct Reports :</label><span>{{ results.directReports }}</span>
+        </div>
+
+        <div class="field">
+          <label>Main Group :</label><span>{{ results.mainGroup }}</span>
+        </div>
+        <div class="field">
+          <label>Cost Center :</label><span>{{ results.costCenter }}</span>
+        </div>
+
+        <div class="field">
+          <label>Region :</label><span>{{ results.region }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: PHONE / ADDRESS -->
+    <div class="section">
+      <div class="section-title">Phone & Address</div>
+
+      <div class="row">
+        <div class="field">
+          <label>Board No :</label><span>{{ results.boardNo }}</span>
+        </div>
+        <div class="field">
+          <label>Direct Phone :</label><span>{{ results.directPhone }}</span>
+        </div>
+
+        <div class="field">
+          <label>Email Address :</label><span>{{ results.emailAddress }}</span>
+        </div>
+        <div class="field">
+          <label>Mobile :</label><span>{{ results.mobile }}</span>
+        </div>
+
+        <div class="field">
+          <label>Business :</label><span>{{ results.business }}</span>
+        </div>
+        <div class="field">
+          <label>Country Code :</label><span>{{ results.countryCode }}</span>
+        </div>
+
+        <div class="field">
+          <label>Business 2 :</label><span>{{ results.business2 }}</span>
+        </div>
+        <div class="field">
+          <label>City Code :</label><span>{{ results.cityCode }}</span>
+        </div>
+
+        <div class="field">
+          <label>Fax :</label><span>{{ results.fax }}</span>
+        </div>
+        <div class="field">
+          <label>Home :</label><span>{{ results.home }}</span>
+        </div>
+
+        <div class="field">
+          <label>Address Location :</label><span>{{ results.addressLocation }}</span>
+        </div>
+        <div class="field">
+          <label>Address :</label><span>{{ results.address }}</span>
+        </div>
+
+        <div class="field">
+          <label>State :</label><span>{{ results.state }}</span>
+        </div>
+        <div class="field">
+          <label>Zip Code :</label><span>{{ results.zipCode }}</span>
+        </div>
+
+        <div class="field">
+          <label>Country :</label><span>{{ results.country }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES SECTION -->
+  <div class="classic-notes">
+    <div class="notes-header">Notes</div>
+
+    <div class="notes-body">
+      <ul>
+        <li>For changes in other fields please contact the HR Department.</li>
+        <li>
+          For more details contact
+          <a href="mailto:adsupport@yourcompany.com">ADSupport</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

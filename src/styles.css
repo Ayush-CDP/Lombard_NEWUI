@@ -1,1 +1,152 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  font-family: 'Montserrat', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure full height */
+html,
+body {
+  height: 100%;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* -------------------- NAVBAR -------------------- */
+.navbar {
+  background: linear-gradient(90deg, #ff7b00, #ff9500);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+}
+
+.navbar-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.navbar-links a {
+  margin-left: 20px;
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.navbar-links a:hover {
+  opacity: 0.8;
+}
+
+.navbar-links .active {
+  border-bottom: 2px solid white;
+  padding-bottom: 4px;
+}
+
+/* -------------------- PAGE AREA -------------------- */
+.page-wrapper {
+  flex: 1 !important; /* <-- pushes footer down */
+  background: #f5f5f5;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.content-card {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* -------------------- MODULE STYLES -------------------- */
+h2 {
+  color: #ff7b00;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.text-input,
+select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+/* Buttons */
+.button-row,
+.btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn,
+.action-btn {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Orange primary */
+.action-btn.primary {
+  background: #ff7b00;
+  color: white;
+}
+
+/* Black */
+.action-btn.dark {
+  background: #04447e;
+  color: white;
+}
+
+/* Light gray */
+.action-btn.light {
+  background: #efefef;
+  color: #ff7b00;
+}
+
+.action-btn:hover {
+  opacity: 0.85;
+}
+
+/* Result blocks */
+.result-block {
+  background: #f2f2f2;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+/* -------------------- FOOTER -------------------- */
+.footer {
+ /* background: linear-gradient(90deg, #ff7b00, #ff9500);*/
+  color: white;
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+  position: fixed;
+  
+  bottom: 0;
+  width: 100%;
+}

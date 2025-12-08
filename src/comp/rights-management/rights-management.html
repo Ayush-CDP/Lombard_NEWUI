@@ -1,0 +1,88 @@
+<div class="module-card">
+  <h2 class="module-title">🔑 Rights Management</h2>
+
+  <!-- Search DL -->
+  <div style="display: flex; flex-wrap: wrap">
+    <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
+
+    <button (click)="getRights()" class="action-btn dark">View Rights</button>
+  </div>
+
+  <br />
+
+  <!-- DL Details -->
+  <div *ngIf="showform">
+    <div class="result-block">
+      <h4 class="title">Members Details</h4>
+
+      <div class="table-container">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>DL Name</th>
+              <th>DL Owner</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngIf="rights">
+              <td>{{ rights.dlName }}</td>
+              <td>{{ rights.dlOwner }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <br />
+
+    <!-- ADD / REMOVE + RIGHTS INPUT -->
+    <div class="form-section">
+      <!-- Action Dropdown -->
+      <label class="input-label">Action</label>
+      <select [(ngModel)]="action" class="select-input">
+        <option value="Add">Add</option>
+        <option value="Remove">Remove</option>
+      </select>
+
+      <!-- Rights Input -->
+      <label class="input-label">Rights</label>
+ 
+      <input
+        [(ngModel)]="rightsInput"
+        placeholder="Enter rights "
+        class="text-input"
+      />
+    </div>
+
+    <br />
+
+    <!-- Submit -->
+    <div class="btn-row">
+      <button (click)="modifyRights()" class="action-btn primary">Submit</button>
+    </div>
+  </div>
+
+  <app-alert [message]="message" [type]="alertType"></app-alert>
+
+  <!-- Notes Section -->
+  <div class="notes-container">
+    <div class="note-block">
+      <h3>NOTE - I</h3>
+      <ol>
+        <li>Enter at least three characters of the DL Name and click <strong>"Get DL Name"</strong>.</li>
+        <li>Select your respective DL from the search list.</li>
+      </ol>
+    </div>
+
+    <div class="note-block">
+      <h3>NOTE - II</h3>
+      <ol>
+        <li>Enter NT IDs for Add / Remove actions.</li>
+        <li>Use comma “,” for multiple values.</li>
+        <li>The DL owner will receive an approval mail.</li>
+        <li>If no owner is found, mail goes to GALUpdate.</li>
+      </ol>
+    </div>
+  </div>
+</div>

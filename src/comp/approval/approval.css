@@ -1,0 +1,116 @@
+/* Page Background */
+.page-wrapper {
+  min-height: 100vh;
+  background: #f1f3f6;
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* Main Container */
+.approval-container {
+  width: 550px;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  animation: fadeIn 0.4s ease;
+}
+
+/* Header */
+.header h2 {
+  margin: 0;
+  text-align: center;
+  color: #ba4a00;
+  font-size: 24px;
+  font-weight: 700;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ff7b00;
+}
+
+/* Table Styling */
+.details-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  margin-top: 25px;
+}
+
+.details-table th {
+  width: 40%;
+  text-align: left;
+  padding: 12px 15px;
+  background: #fff3e5;
+  border-radius: 8px 0 0 8px;
+  font-weight: 600;
+  color: #ba4a00;
+}
+
+.details-table td {
+  padding: 12px 15px;
+  background: #fdfdfd;
+  border-radius: 0 8px 8px 0;
+  border-left: 2px solid #ff7b00;
+  color: #333;
+  font-size: 15px;
+}
+
+/* Status color coding */
+.status.approved {
+  color: #008c3a;
+  font-weight: 700;
+}
+
+.status.rejected {
+  color: #c00000;
+  font-weight: 700;
+}
+
+/* Button Row */
+.actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  width: 48%;
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+  border: none;
+  transition: 0.25s ease-in-out;
+}
+
+/* Approve Button */
+.approve {
+  background: linear-gradient(90deg, #ff7b00, #ff9500);
+  color: white;
+  margin-right: 10px;
+}
+
+.approve:hover {
+  background: linear-gradient(90deg, #ff8f21, #ff9f31);
+  transform: translateY(-2px);
+}
+
+/* Reject Button */
+.reject {
+  background: white;
+  border: 2px solid #ff7b00;
+  color: #ff7b00;
+}
+
+.reject:hover {
+  background: #fff2e1;
+  transform: translateY(-2px);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}

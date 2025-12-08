@@ -1,0 +1,32 @@
+<div class="sidebar" [class.sidebar-collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <h3 *ngIf="!isCollapsed">Lombard Tools</h3>
+    <button class="toggle-btn" (click)="isCollapsed = !isCollapsed">☰</button>
+  </div>
+
+  <nav class="sidebar-links">
+
+    <a routerLink="account-unlock" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="icon">🔓</span>
+      <span *ngIf="!isCollapsed">Account Unlock</span>
+    </a>
+
+    <a routerLink="gal-search" routerLinkActive="active">
+      <span class="icon">📧</span>
+      <span *ngIf="!isCollapsed">GAL Search</span>
+    </a>
+
+    <a routerLink="group-membership" routerLinkActive="active">
+      <span class="icon">👥</span>
+      <span *ngIf="!isCollapsed">Group Membership</span>
+    </a>
+
+    <a routerLink="rights-management" routerLinkActive="active">
+      <span class="icon">🛡️</span>
+      <span *ngIf="!isCollapsed">Rights Management</span>
+    </a>
+
+
+
+  </nav>
+</div>

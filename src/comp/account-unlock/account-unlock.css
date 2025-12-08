@@ -1,0 +1,45 @@
+.result-block {
+  margin-top: 20px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.title {
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.modern-table th {
+  background: #f3f4f6;
+  padding: 12px;
+  width: 180px;
+  text-align: left;
+  font-weight: 600;
+  color: #444;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modern-table td {
+  padding: 12px;
+  color: #333;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modern-table tr:hover td {
+  background: #f9fafb;
+  transition: 0.2s;
+}

@@ -1,0 +1,51 @@
+<div class="page-wrapper">
+
+  <div class="approval-container" *ngIf="request">
+
+    <div class="header">
+      <h2 >{{approvalHeader}}</h2>
+    </div>
+
+    <table class="details-table">
+      <tr>
+        <th>DL Name</th>
+        <td>{{ request.dlName }}</td>
+      </tr>
+      <tr *ngIf="empIds">
+        <th>Employee IDs</th>
+        <td>{{ request.empIds }}</td>
+      </tr>
+      <tr *ngIf="rights">
+        <th>Rights</th>
+        <td>{{ request.rights }}</td>
+      </tr>
+       <tr *ngIf="lock">
+        <th>Is Locked</th>
+        <td>{{ request.isLocked }}</td>
+      </tr>
+      <tr>
+        <th>Action</th>
+        <td>{{ request.action }}</td>
+      </tr>
+      <tr>
+        <th>Event</th>
+        <td>{{ request.event }}</td>
+      </tr>
+      <tr>
+        <th>Status</th>
+        <td class="status {{ request.approvalStatus | lowercase }}">
+          {{ request.approvalStatus }}
+        </td>
+      </tr>
+    </table>
+
+    <div class="actions">
+      <button class="btn approve" (click)="approve()">Approve</button>
+      <button class="btn reject" (click)="reject()">Reject</button>
+    </div>
+
+    <app-alert [message]="message" [type]="alertType"></app-alert>
+  </div>
+  <app-loader></app-loader>
+  <app-alert [message]="ERRmessage" [type]="alertType"></app-alert>
+</div>
