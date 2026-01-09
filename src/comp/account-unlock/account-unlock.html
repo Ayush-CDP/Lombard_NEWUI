@@ -16,22 +16,33 @@
       <table class="modern-table">
         <tbody>
           <tr>
-            <th>DL Owner</th>
-            <td>{{ user.dlOwner }}</td>
+            <th>Employee ID</th>
+            <td>{{ user.employeeId }}</td>
           </tr>
 
           <tr>
-            <th>Name</th>
-            <td>{{ user.dlName }}</td>
+            <th>Locked</th>
+            <td>
+              <span [class.locked]="user.isLocked">
+                {{ user.isLocked ? 'Yes' : 'No' }}
+              </span>
+            </td>
           </tr>
 
-          <tr>
-            <th>Is Locked</th>
-            <td>{{ user.isLocked }}</td>
+          <tr *ngIf="user.message">
+            <th>Info</th>
+            <td>{{ user.message }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
-<button *ngIf="showunlockbtn" (click)="unlockAccount()" class="action-btn primary" [disabled]="loading">Unlock</button>
+<button
+  *ngIf="showunlockbtn"
+  (click)="unlockAccount()"
+  class="action-btn primary"
+  [disabled]="loading || !user?.isLocked">
+  Unlock
+</button>
+

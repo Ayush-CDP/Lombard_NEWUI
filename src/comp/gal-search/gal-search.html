@@ -3,10 +3,11 @@
 
   <div style="display: flex; flex-wrap: wrap">
     <select [(ngModel)]="parameter" class="text-input">
-      <option [ngValue]="0">Name</option>
-      <option [ngValue]="1">Email</option>
-      <option [ngValue]="2">Department</option>
-      <option [ngValue]="3">Location</option>
+      <option [ngValue]="GALSearchEnum.EmpId">Employee ID</option>
+      <option [ngValue]="GALSearchEnum.FirstName">First Name</option>
+      <option [ngValue]="GALSearchEnum.LastName">Last Name</option>
+      <option [ngValue]="GALSearchEnum.Mail">Email</option>
+      <option [ngValue]="GALSearchEnum.DisplayName">Display Name</option>
     </select>
 
     <input [(ngModel)]="value" placeholder="Search value" class="text-input" />

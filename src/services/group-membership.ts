@@ -5,13 +5,13 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class GroupMembershipService {
-  private readonly baseUrl = 'https://localhost:7184/api/GroupMembership';
+  private readonly baseUrl = 'http://172.30.48.14:5000/api/GroupMembership';
 
   constructor(private http: HttpClient) {}
 
-  getByDLName(dlName: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${dlName}`);
-  }
+getByDLName(dlName: string, source: string): Observable<any> {
+  return this.http.get(`${this.baseUrl}/${dlName}?source=${source}`);
+}
 
   addOrRemoveDLMembership(dto: AddOrRemoveDLMembershipDTO): Observable<any> {
     return this.http.post(`${this.baseUrl}/AddOrRemoveDLMembership`, dto);

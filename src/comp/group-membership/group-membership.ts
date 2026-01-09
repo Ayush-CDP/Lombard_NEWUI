@@ -23,6 +23,7 @@ export class GroupMembershipComponent implements OnDestroy {
   empIDs: any;
   alertType: 'success' | 'error' | 'info' = 'info';
   showform = false;
+  source: 'OnPrem' | 'Cloud' = 'OnPrem';
 
   private destroy$ = new Subject<void>();
 
@@ -32,41 +33,40 @@ export class GroupMembershipComponent implements OnDestroy {
     private cd: ChangeDetectorRef
   ) {}
 
-getMembers(): void {
-  const validation = this.validator.validateDLName(this.dlName);
-  if (!validation.isValid) {
-    this.message = validation.errors.join(' | ');
-    this.alertType = 'error';
-    this.members = null;
-    this.showform = false;
-    return;
+  getMembers(): void {
+    const validation = this.validator.validateDLName(this.dlName);
+    if (!validation.isValid) {
+      this.message = validation.errors.join(' | ');
+      this.alertType = 'error';
+      this.members = null;
+      this.showform = false;
+      return;
+    }
+
+this.groupService.getByDLName(this.dlName, this.source).subscribe({
+      next: (res) => {
+        this.members = res.data; // CORRECT
+        this.showform = true;
+        this.cd.detectChanges(); // ⭐ FORCE UI UPDATE
+      },
+      error: (err) => {
+        console.error('GetMembers failed', err);
+        this.message = err?.error?.message || 'Failed to fetch members.';
+        this.alertType = 'error';
+        this.showform = false;
+      },
+    });
   }
 
-  this.groupService.getByDLName(this.dlName).subscribe({
-    next: (res) => {
-
-      this.members = res.data;   // CORRECT
-      this.showform = true;
-
-      this.cd.detectChanges();   // ⭐ FORCE UI UPDATE
-
-    },
-    error: () => {
-      this.message = 'Failed to fetch members.';
-      this.alertType = 'error';
-      this.showform = false;
-    },
-  });
-}
-
-
   modifyMembership(): void {
+    this.showform = false;
     const dto: AddOrRemoveDLMembershipDTO = {
-      DLName: this.dlName,
-      DLOwner: this.owner,
+      DLName: this.members?.dlName,
+      DLOwner: this.members?.dlOwner,
       Action: this.action,
       EmpIds: this.empIDs.trim(),
-     // ApproverEmail: this.userEmail,
+      Source: this.source,
+      // ApproverEmail: this.userEmail,
     };
 
     this.groupService
@@ -78,12 +78,14 @@ getMembers(): void {
           this.alertType = 'success';
           this.cd.detectChanges();
         },
-        error: () => {
-          this.message = 'Operation failed.';
+        error: (err) => {
+          console.error('ModifyMembership failed', err);
+          this.message = err?.error?.message || 'Operation failed.';
           this.alertType = 'error';
           this.cd.detectChanges();
         },
       });
+
   }
 
   ngOnDestroy(): void {

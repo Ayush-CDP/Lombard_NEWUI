@@ -4,7 +4,11 @@
   <!-- Search DL -->
   <div style="display: flex; flex-wrap: wrap">
     <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
-
+ <label>Select Source:</label>
+<select [(ngModel)]="source" class="form-control">
+  <option value="OnPrem">On-Prem</option>
+  <option value="Cloud">Cloud</option>
+</select>
     <button (click)="getRights()" class="action-btn dark">View Rights</button>
   </div>
 
@@ -21,13 +25,15 @@
             <tr>
               <th>DL Name</th>
               <th>DL Owner</th>
+              <th>Source</th>
             </tr>
           </thead>
 
           <tbody>
             <tr *ngIf="rights">
-              <td>{{ rights.dlName }}</td>
-              <td>{{ rights.dlOwner }}</td>
+              <td>{{ rights?.dlName }}</td>
+              <td>{{ rights?.dlOwner }}</td>
+              <td>{{this.source}}</td>
             </tr>
           </tbody>
         </table>
@@ -35,6 +41,7 @@
     </div>
 
     <br />
+  
 
     <!-- ADD / REMOVE + RIGHTS INPUT -->
     <div class="form-section">

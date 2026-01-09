@@ -5,6 +5,7 @@ import { RightsManagementService } from '../../services/rights-management';
 import { AddOrRemoveRightsDTO } from '../../Interfaces/add-or-remove-rights-dto';
 import { Alert } from '../../Shared/alert/alert/alert';
 import { ValidationService } from '../../services/validation-service';
+import { GroupMembershipService } from '../../services/group-membership';
 
 @Component({
   selector: 'app-rights-management',
@@ -19,27 +20,38 @@ export class RightsManagementComponent {
   message = '';
   rights: any;
   alertType: 'success' | 'error' | 'info' = 'info';
-  showform: boolean = false;
-
+  showform = false;
+  source: 'OnPrem' | 'Cloud' = 'OnPrem';
   rightsInput: string = '';
 
   constructor(
     private rightsService: RightsManagementService,
     private validator: ValidationService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private groupService: GroupMembershipService
   ) {}
 
   getRights(): void {
-    this.rightsService.getByDLName(this.dlName).subscribe({
+    const validation = this.validator.validateDLName(this.dlName);
+
+    if (!validation.isValid) {
+      this.message = validation.errors.join(' | ');
+      this.alertType = 'error';
+      this.showform = false;
+      return;
+    }
+    this.groupService.getByDLName(this.dlName, this.source).subscribe({
       next: (res) => {
-        this.rights = res;
+        this.rights = res.data;
         this.showform = true;
-        this.cd.detectChanges(); 
+        this.cd.detectChanges();
       },
-      error: () => {
-        this.message = 'Failed to fetch rights.';
+      error: (err) => {
+        console.error('Rights fetch failed:', err);
         this.alertType = 'error';
-        this.cd.detectChanges();   
+        this.message = 'Failed to fetch rights.';
+        this.showform = false;
+        this.cd.detectChanges();
       },
     });
   }
@@ -50,6 +62,7 @@ export class RightsManagementComponent {
       DLOwner: this.userEmail,
       Action: this.action,
       Rights: this.rightsInput,
+      Source: this.source,
     };
 
     this.rightsService.addOrRemoveRights(dto).subscribe({
@@ -59,10 +72,11 @@ export class RightsManagementComponent {
         this.alertType = 'success';
         this.cd.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Rights update failed:', err);
         this.message = 'Operation failed.';
         this.alertType = 'error';
-        this.cd.detectChanges();   
+        this.cd.detectChanges();
       },
     });
   }

@@ -3,4 +3,5 @@ export interface AddOrRemoveRightsDTO {
     DLOwner : string;
     Action : string;
     Rights : string;
+    Source: 'OnPrem' | 'Cloud';
 }

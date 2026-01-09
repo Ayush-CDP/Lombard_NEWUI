@@ -1,10 +1,15 @@
 <div class="module-card">
   <h2 class="module-title">👥 Group Membership</h2>
-  <div style="display: flex; flex-wrap: wrap;">
+  <div style="display: flex; flex-wrap: wrap">
     <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
+    <label>Select Source:</label>
+    <select [(ngModel)]="source" class="form-control">
+      <option value="OnPrem">On-Prem</option>
+      <option value="Cloud">Cloud</option>
+    </select>
     <button (click)="getMembers()" class="action-btn dark">Get Details</button>
   </div>
-<app-alert [message]="message" [type]="alertType"></app-alert>
+  <app-alert [message]="message" [type]="alertType"></app-alert>
   <div *ngIf="showform">
     <div class="result-block">
       <h4 class="title">Members Details</h4>
@@ -15,6 +20,7 @@
             <tr>
               <th>DL Name</th>
               <th>DL Owner</th>
+              <th>Source</th>
             </tr>
           </thead>
           <tbody>
@@ -22,11 +28,19 @@
               <!-- <td>{{ i + 1 }}</td> -->
               <td>{{ members?.dlName }}</td>
               <td>{{ members?.dlOwner }}</td>
+              <td>{{ this.source }}</td> 
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+    <br />
+    <!-- <label>Select Source:</label>
+    <select [(ngModel)]="source" class="form-control">
+      <option value="OnPrem">On-Prem</option>
+      <option value="Cloud">Cloud</option>
+    </select> -->
+    <label>Action</label>
     <br />
     <select [(ngModel)]="action" class="text-input">
       <option value="Add">Add</option>
@@ -38,7 +52,7 @@
   <div class="btn-row">
     <button *ngIf="showform" (click)="modifyMembership()" class="action-btn primary">Submit</button>
   </div>
-  
+
   <!-- NOTES SECTION -->
   <div class="notes-container">
     <div class="note-block">

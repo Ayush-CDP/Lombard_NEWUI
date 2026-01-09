@@ -8,7 +8,7 @@ import { AddOrRemoveRightsDTO } from '../Interfaces/add-or-remove-rights-dto';
   providedIn: 'root'
 })
 export class RightsManagementService {
-  private baseUrl = 'https://localhost:7184/api/RightsManagement';
+  private baseUrl = 'http://172.30.48.14:5000/api/RightsManagement';
 
   constructor(private http: HttpClient) {}
 

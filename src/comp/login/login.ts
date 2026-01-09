@@ -1,33 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
 })
-export class Login {
-constructor(private msal: MsalService, private router: Router) {}
+export class LoginComponent implements OnInit {
 
-ngOnInit() {
-  const loggedIn = this.msal.instance.getAllAccounts().length > 0;
-  if (loggedIn) {
-    this.router.navigate(['/dashboard']);
-  }else{
-    this.login();
-  }
-}
+  constructor(
+    private msal: MsalService,
+    private router: Router
+  ) {}
 
-login() {
-  this.msal.loginPopup().subscribe({
-    next: () => {
+  ngOnInit(): void {
+    const accounts = this.msal.instance.getAllAccounts();
+
+    if (accounts.length > 0) {
+      this.msal.instance.setActiveAccount(accounts[0]);
       this.router.navigate(['/dashboard']);
-    },
-    error: (err) => console.error(err)
-  });
-}
+    }
+  }
 
-
+  login(): void {
+    this.msal.loginRedirect(); // ✅ NO subscribe
+  }
 }

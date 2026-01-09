@@ -13,6 +13,8 @@ import { GALResult } from '../../Interfaces/GALResult';
   styleUrl: './gal-search.css',
 })
 export class GalSearchComponent {
+  GALSearchEnum = GALSearchEnum;  
+
   parameter: GALSearchEnum = GALSearchEnum.DisplayName;
   value = '';
 
@@ -39,14 +41,15 @@ export class GalSearchComponent {
         this.results = res;
         this.message = '';
         this.alertType = 'success';
-        this.cd.detectChanges();     // ← FIX
+        this.cd.detectChanges();
       },
       error: () => {
         this.results = null;
         this.message = 'No matching records found.';
         this.alertType = 'error';
-        this.cd.detectChanges();     // ← FIX
+        this.cd.detectChanges();
       },
     });
   }
 }
+

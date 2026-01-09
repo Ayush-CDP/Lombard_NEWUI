@@ -1,10 +1,9 @@
-
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AccountUnlockService } from '../../services/account-unlock';
 import { AccountUnlockRequestDTO } from '../../Interfaces/account-unlock-request-dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Alert } from "../../Shared/alert/alert/alert";
+import { Alert } from '../../Shared/alert/alert/alert';
 
 @Component({
   selector: 'app-account-unlock',
@@ -12,7 +11,6 @@ import { Alert } from "../../Shared/alert/alert/alert";
   templateUrl: './account-unlock.html',
   styleUrl: './account-unlock.css',
 })
-
 export class AccountUnlockComponent {
   employeeId = '';
   unlock = false;
@@ -22,47 +20,77 @@ export class AccountUnlockComponent {
   loading = false;
   showunlockbtn = false;
 
-  constructor(private accountUnlockService: AccountUnlockService,  private cd: ChangeDetectorRef) {}
+  constructor(private accountUnlockService: AccountUnlockService, private cd: ChangeDetectorRef) {}
 
- getUserDetails(): void {
-  if (!this.employeeId.trim()) return;
+  getUserDetails(): void {
+    if (!this.employeeId.trim()) return;
+
+    this.loading = true;
+    this.message = '';
+    this.showunlockbtn = false;
+    this.cd.detectChanges();
+
+    this.accountUnlockService.getUserDetails(this.employeeId).subscribe({
+      next: (res) => {
+        if (!res.success) {
+          this.message = res.message || 'User not found.';
+          this.alertType = 'error';
+          return;
+        }
+
+        this.user = res.data;
+        this.alertType = 'success';
+
+        // show unlock only if actually locked
+        this.showunlockbtn = this.user.isLocked === true;
+
+        this.loading = false;
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        this.message = err.error?.message || 'Error fetching user.';
+        this.user = null;
+        this.alertType = 'error';
+        this.loading = false;
+        this.showunlockbtn = false;
+        this.cd.detectChanges();
+      },
+    });
+  }
+
+ unlockAccount(): void {
+  const request: AccountUnlockRequestDTO = {
+    EmployeeId: this.employeeId,
+    DLName: '',
+    DLOwner: '',
+    Unlock: true
+  };
 
   this.loading = true;
-  this.cd.detectChanges(); // force initial state
+  this.cd.detectChanges();
 
-  this.accountUnlockService.getUserDetails(this.employeeId).subscribe({
-    next: (response) => {
-      this.user = response.userDetails;
-      this.message = response.message;
-      this.loading = false;
-      this.alertType = 'success';
-      this.showunlockbtn = true;
-      this.cd.detectChanges(); // prevent ExpressionChanged error
-    },
-    error: (err) => {
-      this.message = err.error?.message || 'Error fetching user.';
-      this.user = '';
-      this.loading = false;
-      this.alertType = 'error';
+  this.accountUnlockService.unlockAccount(request).subscribe({
+    next: (res) => {
+      if (res.success) {
+        this.message = 'Account unlock request sent successfully.';
+        this.alertType = 'success';
+      } else {
+        this.message = res.message || 'Unlock failed.';
+        this.alertType = 'error';
+      }
+
+      this.user = null;
       this.showunlockbtn = false;
-      this.cd.detectChanges(); // critical fix
+      this.loading = false;
+      this.cd.detectChanges();
+    },
+    error: () => {
+      this.message = 'Unlock failed.';
+      this.alertType = 'error';
+      this.loading = false;
+      this.cd.detectChanges();
     }
   });
 }
 
-
-  unlockAccount(): void {
-    if (!this.employeeId.trim()) return;
-
-    const request: AccountUnlockRequestDTO = {
-      EmployeeId: this.employeeId,
-      Unlock: this.unlock
-    };
-
-    this.accountUnlockService.unlockAccount(request).subscribe({
-      next: (response) => this.message = response.message || 'Account unlocked successfully.',
-      error: (err) => this.message = err.error?.message || 'Unlock failed.'
-    });
-  }
 }
-

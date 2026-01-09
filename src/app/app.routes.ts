@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { MsalGuard } from '@azure/msal-angular';
 
-import { Login } from '../comp/login/login';
+import { LoginComponent } from '../comp/login/login';
 import { Dashboard } from '../comp/dashboard/dashboard';
 
 import { AccountUnlockComponent } from '../comp/account-unlock/account-unlock';
@@ -14,7 +14,7 @@ export const routes: Routes = [
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-  { path: 'login', component: Login },
+  { path: 'login', component: LoginComponent },
 
   {
     path: 'dashboard',

@@ -39,7 +39,7 @@
       </tr>
     </table>
 
-    <div class="actions">
+    <div *ngIf="actions" class="actions">
       <button class="btn approve" (click)="approve()">Approve</button>
       <button class="btn reject" (click)="reject()">Reject</button>
     </div>

@@ -24,6 +24,7 @@ export class Approval {
   empIds : boolean = false;
   rights  : boolean = false;
   lock : boolean = false;
+  actions : boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,10 +44,10 @@ export class Approval {
         } else if (res.status === 200) {
           this.request = res.data;
           console.log(this.request);
-          if(this.request.event == 'Rights'){
+          if(this.request.event == 'Rights | OnPrem' || this.request.event == 'Rights | Cloud'){
               this.approvalHeader = 'DL Rights Request';
               this.rights = true;
-          }else if(this.request.event == 'Membership'){
+          }else if(this.request.event == 'Membership | OnPrem' || this.request.event == 'Membership | Cloud' ){
             this.approvalHeader = 'DL Membership Request';
             this.empIds = true;
           }else{
@@ -68,6 +69,7 @@ export class Approval {
   approve() {
     this.approvalService.approve(this.id).subscribe((res) => {
       this.message = res;
+      this.actions = false;
       this.alertType = res === 'Approved Successfully' ? 'success' : 'error';
       this.cdr.detectChanges();
     });
@@ -76,6 +78,7 @@ export class Approval {
   reject() {
     this.approvalService.reject(this.id).subscribe((res) => {
       this.message = res;
+      this.actions = false;
       this.alertType = res === 'Rejected Successfully' ? 'success' : 'error';
       this.cdr.detectChanges();
     });

@@ -3,7 +3,7 @@ export interface AddOrRemoveDLMembershipDTO {
     DLOwner : string;
     Action : string;
     EmpIds : string;
-
+    Source: 'OnPrem' | 'Cloud';
 }
 
 
