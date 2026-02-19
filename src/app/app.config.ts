@@ -22,28 +22,17 @@ import {
   IPublicClientApplication,
   InteractionType
 } from '@azure/msal-browser';
+import { environment } from '../Environments/environment';
 
-// export function MSALInstanceFactory(): IPublicClientApplication {
-//   return new PublicClientApplication({
-//     auth: {
-//       clientId: "b823223e-37c8-4776-a1f3-93f0045a9e2d",
-//       authority: "https://login.microsoftonline.com/5a64b65b-19d2-4b0f-b1de-60f30364b163",
-//       redirectUri: "http://localhost:4200/"
-//     }
-//   });
-// }
 
-// "TenantId": "5a64b65b-19d2-4b0f-b1de-60f30364b163",
-// "Authority": "https://login.microsoftonline.com/5a64b65b-19d2-4b0f-b1de-60f30364b163",
-// "ClientId": "b823223e-37c8-4776-a1f3-93f0045a9e2d",
 export function MSALInstanceFactory(): IPublicClientApplication {
-  return new PublicClientApplication({
-    auth: {
-      clientId: "f75eb10f-3889-48fc-b8e8-106eebbd671b",
-      authority: "https://login.microsoftonline.com/bcb33dcc-236e-4431-8beb-bd065435b8da",
-      redirectUri: "http://localhost:4200/"
+ return new PublicClientApplication({
+   auth: {
+      clientId: environment.msal.clientId,
+      authority: environment.msal.authority,
+      redirectUri: environment.msal.redirectUri
     }
-  });
+ });
 }
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {

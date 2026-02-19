@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../Environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApprovalService {
-  private baseUrl = 'http://172.30.48.14:5000/api/Approval';
+  private baseUrl = `${environment.apiBaseUrl}/Approval`;
 
   constructor(private http: HttpClient) {}
 

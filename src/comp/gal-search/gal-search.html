@@ -1,7 +1,7 @@
 <div class="module-card">
   <h2 class="module-title">📧 GAL Search</h2>
 
-  <div style="display: flex; flex-wrap: wrap">
+  <div style="display: flex; flex-wrap: wrap; gap: 8px">
     <select [(ngModel)]="parameter" class="text-input">
       <option [ngValue]="GALSearchEnum.EmpId">Employee ID</option>
       <option [ngValue]="GALSearchEnum.FirstName">First Name</option>
@@ -10,165 +10,193 @@
       <option [ngValue]="GALSearchEnum.DisplayName">Display Name</option>
     </select>
 
-    <input [(ngModel)]="value" placeholder="Search value" class="text-input" />
+    <input
+      [(ngModel)]="value"
+      placeholder="Search value"
+      class="text-input"
+      (keyup.enter)="search()"
+    />
 
     <button (click)="search()" class="action-btn dark">Search</button>
+    <button (click)="clearSearch()" class="action-btn light">Clear</button>
   </div>
 
   <app-alert [message]="message" [type]="alertType"></app-alert>
+  <!-- PAGINATION -->
+  <div style="margin: 1rem 0" *ngIf="results.length > pageSize" class="pagination">
+    <button
+      style="margin: 0 1rem"
+      class="action-btn dark"
+      (click)="prevPage()"
+      [disabled]="currentPage === 1"
+    >
+      ← Prev
+    </button>
 
-  <!-- SHOW RESULT ONLY IF results IS NOT NULL -->
-  <div *ngIf="results" class="gal-container">
-    <!-- SECTION 1: GENERAL -->
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+
+    <button
+      style="margin: 0 1rem"
+      class="action-btn dark"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+    >
+      Next →
+    </button>
+  </div>
+  <!-- MULTIPLE RESULTS -->
+  <div *ngIf="results.length > 1 && !selectedUser" class="gal-container">
+    <div class="section-title">Select User</div>
+
+    <div *ngFor="let user of pagedResults" class="result-item" (click)="openModal(user)">
+      <div
+        style="
+          margin: 1rem;
+          border: 2px solid black;
+          padding: 1rem;
+          border-radius: 5px;
+          cursor: pointer;
+        "
+      >
+        👤 {{ user.display }} ({{ user.empNo }}) — {{ user.department }}
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECTED USER DETAILS -->
+  <div *ngIf="selectedUser" class="gal-container">
+    <button style="margin: 1rem 0" class="action-btn dark" (click)="goBackToResults()">
+      ← Back to Results
+    </button>
+
+    <!-- SECTION 1 -->
     <div class="section">
       <div class="section-title">General</div>
-
       <div class="row">
         <div class="field">
-          <label>First Name :</label><span>{{ results.firstName }}</span>
+          <label>First Name :</label><span>{{ selectedUser.firstName }}</span>
         </div>
         <div class="field">
-          <label>Last Name :</label><span>{{ results.lastName }}</span>
-        </div>
-
-        <div class="field">
-          <label>Grade :</label><span>{{ results.grade }}</span>
+          <label>Last Name :</label><span>{{ selectedUser.lastName }}</span>
         </div>
         <div class="field">
-          <label>Initials :</label><span>{{ results.initials }}</span>
-        </div>
-
-        <div class="field">
-          <label>Display :</label><span>{{ results.display }}</span>
+          <label>Grade :</label><span>{{ selectedUser.grade }}</span>
         </div>
         <div class="field">
-          <label>Known As :</label><span>{{ results.knownAs }}</span>
+          <label>Initials :</label><span>{{ selectedUser.initials }}</span>
         </div>
-
         <div class="field">
-          <label>WorkStation ID :</label><span>{{ results.workStationID }}</span>
+          <label>Display :</label><span>{{ selectedUser.display }}</span>
+        </div>
+        <div class="field">
+          <label>Known As :</label><span>{{ selectedUser.knownAs }}</span>
+        </div>
+        <div class="field">
+          <label>WorkStation ID :</label><span>{{ selectedUser.workStationID }}</span>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 2: ORGANISATION -->
+    <!-- SECTION 2 -->
     <div class="section">
       <div class="section-title">Organisation</div>
-
       <div class="row">
         <div class="field">
-          <label>Company :</label><span>{{ results.company }}</span>
+          <label>Company :</label><span>{{ selectedUser.company }}</span>
         </div>
         <div class="field">
-          <label>Designation :</label><span>{{ results.designation }}</span>
-        </div>
-
-        <div class="field">
-          <label>Emp No :</label><span>{{ results.empNo }}</span>
+          <label>Designation :</label><span>{{ selectedUser.designation }}</span>
         </div>
         <div class="field">
-          <label>Group :</label><span>{{ results.group }}</span>
-        </div>
-
-        <div class="field">
-          <label>Location :</label><span>{{ results.location }}</span>
+          <label>Emp No :</label><span>{{ selectedUser.empNo }}</span>
         </div>
         <div class="field">
-          <label>Department :</label><span>{{ results.department }}</span>
-        </div>
-
-        <div class="field">
-          <label>Manager :</label><span>{{ results.manager }}</span>
+          <label>Group :</label><span>{{ selectedUser.group }}</span>
         </div>
         <div class="field">
-          <label>Direct Reports :</label><span>{{ results.directReports }}</span>
-        </div>
-
-        <div class="field">
-          <label>Main Group :</label><span>{{ results.mainGroup }}</span>
+          <label>Location :</label><span>{{ selectedUser.location }}</span>
         </div>
         <div class="field">
-          <label>Cost Center :</label><span>{{ results.costCenter }}</span>
+          <label>Department :</label><span>{{ selectedUser.department }}</span>
         </div>
-
         <div class="field">
-          <label>Region :</label><span>{{ results.region }}</span>
+          <label>Manager :</label><span>{{ selectedUser.manager }}</span>
+        </div>
+        <div class="field">
+          <label>Direct Reports :</label><span>{{ selectedUser.directReports }}</span>
+        </div>
+        <div class="field">
+          <label>Main Group :</label><span>{{ selectedUser.mainGroup }}</span>
+        </div>
+        <div class="field">
+          <label>Cost Center :</label><span>{{ selectedUser.costCenter }}</span>
+        </div>
+        <div class="field">
+          <label>Region :</label><span>{{ selectedUser.region }}</span>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 3: PHONE / ADDRESS -->
+    <!-- SECTION 3 -->
     <div class="section">
       <div class="section-title">Phone & Address</div>
-
       <div class="row">
         <div class="field">
-          <label>Board No :</label><span>{{ results.boardNo }}</span>
+          <label>Board No :</label><span>{{ selectedUser.boardNo }}</span>
         </div>
         <div class="field">
-          <label>Direct Phone :</label><span>{{ results.directPhone }}</span>
-        </div>
-
-        <div class="field">
-          <label>Email Address :</label><span>{{ results.emailAddress }}</span>
+          <label>Direct Phone :</label><span>{{ selectedUser.directPhone }}</span>
         </div>
         <div class="field">
-          <label>Mobile :</label><span>{{ results.mobile }}</span>
-        </div>
-
-        <div class="field">
-          <label>Business :</label><span>{{ results.business }}</span>
+          <label>Email Address :</label><span>{{ selectedUser.emailAddress }}</span>
         </div>
         <div class="field">
-          <label>Country Code :</label><span>{{ results.countryCode }}</span>
-        </div>
-
-        <div class="field">
-          <label>Business 2 :</label><span>{{ results.business2 }}</span>
+          <label>Mobile :</label><span>{{ selectedUser.mobile }}</span>
         </div>
         <div class="field">
-          <label>City Code :</label><span>{{ results.cityCode }}</span>
-        </div>
-
-        <div class="field">
-          <label>Fax :</label><span>{{ results.fax }}</span>
+          <label>Business :</label><span>{{ selectedUser.business }}</span>
         </div>
         <div class="field">
-          <label>Home :</label><span>{{ results.home }}</span>
-        </div>
-
-        <div class="field">
-          <label>Address Location :</label><span>{{ results.addressLocation }}</span>
+          <label>Country Code :</label><span>{{ selectedUser.countryCode }}</span>
         </div>
         <div class="field">
-          <label>Address :</label><span>{{ results.address }}</span>
-        </div>
-
-        <div class="field">
-          <label>State :</label><span>{{ results.state }}</span>
+          <label>Business 2 :</label><span>{{ selectedUser.business2 }}</span>
         </div>
         <div class="field">
-          <label>Zip Code :</label><span>{{ results.zipCode }}</span>
+          <label>City Code :</label><span>{{ selectedUser.cityCode }}</span>
         </div>
-
         <div class="field">
-          <label>Country :</label><span>{{ results.country }}</span>
+          <label>Fax :</label><span>{{ selectedUser.fax }}</span>
+        </div>
+        <div class="field">
+          <label>Home :</label><span>{{ selectedUser.home }}</span>
+        </div>
+        <div class="field">
+          <label>Address Location :</label><span>{{ selectedUser.addressLocation }}</span>
+        </div>
+        <div class="field">
+          <label>Address :</label><span>{{ selectedUser.address }}</span>
+        </div>
+        <div class="field">
+          <label>State :</label><span>{{ selectedUser.state }}</span>
+        </div>
+        <div class="field">
+          <label>Zip Code :</label><span>{{ selectedUser.zipCode }}</span>
+        </div>
+        <div class="field">
+          <label>Country :</label><span>{{ selectedUser.country }}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- NOTES SECTION -->
+  <!-- NOTES -->
   <div class="classic-notes">
     <div class="notes-header">Notes</div>
-
     <div class="notes-body">
       <ul>
         <li>For changes in other fields please contact the HR Department.</li>
-        <li>
-          For more details contact
-          <a href="mailto:adsupport@yourcompany.com">ADSupport</a>
-        </li>
+        <li>For more details contact <a href="mailto:adsupport@yourcompany.com">ADSupport</a></li>
       </ul>
     </div>
   </div>

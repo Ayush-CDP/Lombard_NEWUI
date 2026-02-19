@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AccountUnlockRequestDTO, AccountUnlockStatus, ApiResponse } from '../Interfaces/account-unlock-request-dto';
+import { environment } from '../Environments/environment';
 
 
 
@@ -9,11 +10,12 @@ import { AccountUnlockRequestDTO, AccountUnlockStatus, ApiResponse } from '../In
   providedIn: 'root'
 })
 export class AccountUnlockService {
-  private baseUrl = 'http://172.30.48.14:5000/api/AccountUnlock';
+  private baseUrl = `${environment.apiBaseUrl}/account-unlock`;
 
   constructor(private http: HttpClient) {}
 
 getUserDetails(employeeId: string): Observable<ApiResponse<AccountUnlockStatus>> {
+  console.log(this.baseUrl);
   return this.http.get<ApiResponse<AccountUnlockStatus>>(
     `${this.baseUrl}/${employeeId}`
   );
