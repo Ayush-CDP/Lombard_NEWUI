@@ -37,7 +37,7 @@ export class AccountUnlockComponent {
           this.alertType = 'error';
           return;
         }
-
+        console.log(res.data);
         this.user = res.data;
         this.alertType = 'success';
 
