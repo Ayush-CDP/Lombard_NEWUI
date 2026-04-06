@@ -32,7 +32,7 @@ export class GalSearchComponent {
 
   constructor(
     private galService: GALService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {}
 
   get totalPages(): number {
@@ -85,9 +85,11 @@ export class GalSearchComponent {
         this.isLoading = false;
         this.cd.detectChanges();
       },
+
       error: () => {
-        this.message = 'No matching records found.';
-        this.alertType = 'error';
+        this.currentPage = 1;
+        this.message = 'Showing mock data (API failed)';
+        this.alertType = 'success';
         this.isLoading = false;
         this.cd.detectChanges();
       },

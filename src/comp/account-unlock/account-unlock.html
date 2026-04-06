@@ -1,4 +1,4 @@
-<div class="module-card">
+<div class="module-card" *ngIf="hasAccess">
   <h2 class="module-title">🔐 Account Unlock</h2>
   <div style="display: flex; flex-wrap: wrap">
     <input [(ngModel)]="employeeId" placeholder="Enter Employee ID" class="text-input" />

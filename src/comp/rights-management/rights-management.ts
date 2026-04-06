@@ -22,6 +22,7 @@ export class RightsManagementComponent {
   alertType: 'success' | 'error' | 'info' = 'info';
   showform = false;
   source: 'OnPrem' | 'Cloud' = 'OnPrem';
+  usedSource: 'OnPrem' | 'Cloud' = 'OnPrem';
   rightsInput: string = '';
 
   constructor(
@@ -43,6 +44,7 @@ export class RightsManagementComponent {
     this.groupService.getByDLName(this.dlName, this.source).subscribe({
       next: (res) => {
         this.rights = res.data;
+        this.usedSource = this.source;
         this.showform = true;
         this.cd.detectChanges();
       },
@@ -67,9 +69,9 @@ export class RightsManagementComponent {
 
     this.rightsService.addOrRemoveRights(dto).subscribe({
       next: (res) => {
-        this.showform = false;
         this.message = res.message || 'Operation successful.';
         this.alertType = 'success';
+        this.resetForm();
         this.cd.detectChanges();
       },
       error: (err) => {
@@ -79,5 +81,15 @@ export class RightsManagementComponent {
         this.cd.detectChanges();
       },
     });
+  }
+
+  resetForm(): void {
+    this.dlName = '';
+    this.rightsInput = '';
+    this.userEmail = '';
+    this.action = 'Add';
+    this.rights = null;
+    this.showform = false;
+    this.usedSource = 'OnPrem';
   }
 }

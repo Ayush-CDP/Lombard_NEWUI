@@ -24,6 +24,7 @@ export class GroupMembershipComponent implements OnDestroy {
   alertType: 'success' | 'error' | 'info' = 'info';
   showform = false;
   source: 'OnPrem' | 'Cloud' = 'OnPrem';
+  usedSource: 'OnPrem' | 'Cloud' = 'OnPrem'; // Track the source used to fetch data
 
   private destroy$ = new Subject<void>();
 
@@ -46,6 +47,7 @@ export class GroupMembershipComponent implements OnDestroy {
 this.groupService.getByDLName(this.dlName, this.source).subscribe({
       next: (res) => {
         this.members = res.data; // CORRECT
+        this.usedSource = this.source; // Store the source that was used to fetch data
         this.showform = true;
         this.cd.detectChanges(); // ⭐ FORCE UI UPDATE
       },
@@ -76,6 +78,7 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
         next: (res) => {
           this.message = res.data || 'Operation successful.';
           this.alertType = 'success';
+          this.resetForm();
           this.cd.detectChanges();
         },
         error: (err) => {
@@ -86,6 +89,15 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
         },
       });
 
+  }
+
+  resetForm(): void {
+    this.dlName = '';
+    this.empIDs = '';
+    this.action = 'Add';
+    this.members = null;
+    this.showform = false;
+    this.usedSource = 'OnPrem';
   }
 
   ngOnDestroy(): void {

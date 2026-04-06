@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { CommonModule } from '@angular/common';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
@@ -13,19 +14,26 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private msal: MsalService,
-    private router: Router
+    private router: Router,
+    private auth: Auth
   ) {}
 
   ngOnInit(): void {
+
     const accounts = this.msal.instance.getAllAccounts();
 
     if (accounts.length > 0) {
+
       this.msal.instance.setActiveAccount(accounts[0]);
+
+      // ✅ Check group
+      //this.auth.loadAccountUnlockPermission();
+
       this.router.navigate(['/dashboard']);
     }
   }
 
   login(): void {
-    this.msal.loginRedirect(); // ✅ NO subscribe
+    this.msal.loginRedirect();
   }
 }

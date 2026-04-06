@@ -50,11 +50,23 @@
   box-shadow: 0 3px 12px rgba(0,0,0,0.1);
 }
 
+.result-item div {
+  word-break: break-word;
+  white-space: normal;
+}
+
+
+
 .section {
   margin-bottom: 25px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
+  transition: 0.2s ease;
+}
+
+.section:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
 .section-title {
@@ -67,28 +79,36 @@
 
 .row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 🔥 responsive */
+  gap: 15px 25px;
   padding: 15px;
 }
 
 .field {
   display: flex;
-  margin-bottom: 12px;
+  align-items: flex-start; /* 🔥 important for multiline */
+  gap: 10px;
+  min-width: 0; /* 🔥 prevents overflow */
 }
 
 .field label {
-  width: 150px;
+  min-width: 140px; /* instead of fixed width */
   font-weight: 600;
   color: #333;
+  flex-shrink: 0;
 }
 
 .field span {
-  flex-grow: 1;
+  flex: 1;
   background: #f8f8f8;
   padding: 6px 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
   color: #444;
+
+  /* 🔥 MOST IMPORTANT */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 

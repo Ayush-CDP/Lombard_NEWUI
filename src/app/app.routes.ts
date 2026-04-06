@@ -25,7 +25,7 @@ export const routes: Routes = [
       { path: 'gal-search', component: GalSearchComponent },
       { path: 'group-membership', component: GroupMembershipComponent },
       { path: 'rights-management', component: RightsManagementComponent },
-      { path: '', redirectTo: 'account-unlock', pathMatch: 'full' }
+      { path: '', redirectTo: 'group-membership', pathMatch: 'full' }
     ]
   },
   { path: 'approval', component: Approval },

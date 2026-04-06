@@ -5,8 +5,7 @@
   </div>
 
   <nav class="sidebar-links">
-
-    <a routerLink="account-unlock" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <a *ngIf="auth.hasFeatureAccess()" routerLink="account-unlock" routerLinkActive="active">
       <span class="icon">🔓</span>
       <span *ngIf="!isCollapsed">Account Unlock</span>
     </a>
@@ -25,8 +24,5 @@
       <span class="icon">🛡️</span>
       <span *ngIf="!isCollapsed">Rights Management</span>
     </a>
-
-
-
   </nav>
 </div>

@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AccountUnlockService } from '../../services/account-unlock';
 import { AccountUnlockRequestDTO } from '../../Interfaces/account-unlock-request-dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Alert } from '../../Shared/alert/alert/alert';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-account-unlock',
@@ -11,7 +12,7 @@ import { Alert } from '../../Shared/alert/alert/alert';
   templateUrl: './account-unlock.html',
   styleUrl: './account-unlock.css',
 })
-export class AccountUnlockComponent {
+export class AccountUnlockComponent implements OnInit {
   employeeId = '';
   unlock = false;
   message = '';
@@ -19,8 +20,17 @@ export class AccountUnlockComponent {
   alertType: 'success' | 'error' | 'info' = 'info';
   loading = false;
   showunlockbtn = false;
+  hasAccess = false;
 
-  constructor(private accountUnlockService: AccountUnlockService, private cd: ChangeDetectorRef) {}
+  constructor(
+    private accountUnlockService: AccountUnlockService,
+    private cd: ChangeDetectorRef,
+    private auth: Auth
+  ) {}
+
+  ngOnInit(): void {
+    this.hasAccess = this.auth.hasFeatureAccess();
+  }
 
   getUserDetails(): void {
     if (!this.employeeId.trim()) return;
@@ -79,9 +89,7 @@ export class AccountUnlockComponent {
         this.alertType = 'error';
       }
 
-      this.user = null;
-      this.showunlockbtn = false;
-      this.loading = false;
+      this.resetForm();
       this.cd.detectChanges();
     },
     error: () => {
@@ -93,4 +101,34 @@ export class AccountUnlockComponent {
   });
 }
 
+resetForm(): void {
+  this.employeeId = '';
+  this.user = null;
+  this.unlock = false;
+  this.showunlockbtn = false;
+  this.loading = false;
 }
+
+}
+
+//Azure AD
+//    ├── App Roles (Feature.Access)
+//    ├── Security Group (optional)
+//    └── Group → Role mapping
+ 
+// User
+//    ↓
+// Login
+//    ↓
+// Token contains roles
+//    ↓
+// App checks role
+//    ↓
+// Feature enabled
+
+//{
+//   "aud": "your-app-client-id",
+//   "roles": ["Feature.Access"],
+//   "name": "John Doe",
+//   "upn": "john@domain.com"
+// }
