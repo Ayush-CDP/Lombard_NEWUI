@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { GALService } from '../../services/gal';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,6 +35,12 @@ export class GalSearchComponent {
     private cd: ChangeDetectorRef,
   ) {}
 
+  private _subs: any[] = [];
+
+  ngOnDestroy(): void {
+    this._subs.forEach(s => s?.unsubscribe && s.unsubscribe());
+  }
+
   get totalPages(): number {
     return Math.ceil(this.results.length / this.pageSize);
   }
@@ -67,7 +73,7 @@ export class GalSearchComponent {
     this.resetState();
     this.isLoading = true;
 
-    this.galService.search(this.parameter, this.value).subscribe({
+    const sub = this.galService.search(this.parameter, this.value).subscribe({
       next: (res) => {
         this.results = res;
         this.currentPage = 1;
@@ -88,12 +94,13 @@ export class GalSearchComponent {
 
       error: () => {
         this.currentPage = 1;
-        this.message = 'Showing mock data (API failed)';
-        this.alertType = 'success';
+        this.message = 'Search failed (API error)';
+        this.alertType = 'error';
         this.isLoading = false;
         this.cd.detectChanges();
       },
     });
+    this._subs.push(sub);
   }
 
   openModal(user: GALResult) {

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RightsManagementService } from '../../services/rights-management';
@@ -17,6 +17,7 @@ export class RightsManagementComponent {
   dlName = '';
   userEmail = '';
   action: 'Add' | 'Remove' = 'Add';
+  operationType: 'SendEmailAccess' | 'GroupOwnershipChange' = 'SendEmailAccess';
   message = '';
   rights: any;
   alertType: 'success' | 'error' | 'info' = 'info';
@@ -32,6 +33,12 @@ export class RightsManagementComponent {
     private groupService: GroupMembershipService
   ) {}
 
+  private _subs: any[] = [];
+
+  ngOnDestroy(): void {
+    this._subs.forEach(s => s?.unsubscribe && s.unsubscribe());
+  }
+
   getRights(): void {
     const validation = this.validator.validateDLName(this.dlName);
 
@@ -41,7 +48,7 @@ export class RightsManagementComponent {
       this.showform = false;
       return;
     }
-    this.groupService.getByDLName(this.dlName, this.source).subscribe({
+    const sub = this.groupService.getByDLName(this.dlName, this.source).subscribe({
       next: (res) => {
         this.rights = res.data;
         this.usedSource = this.source;
@@ -51,11 +58,12 @@ export class RightsManagementComponent {
       error: (err) => {
         console.error('Rights fetch failed:', err);
         this.alertType = 'error';
-        this.message = 'Failed to fetch rights.';
+        this.message = err?.error?.message || 'Failed to fetch rights.';
         this.showform = false;
         this.cd.detectChanges();
       },
     });
+    this._subs.push(sub);
   }
 
   modifyRights(): void {
@@ -67,7 +75,7 @@ export class RightsManagementComponent {
       Source: this.source,
     };
 
-    this.rightsService.addOrRemoveRights(dto).subscribe({
+    const sub2 = this.rightsService.addOrRemoveRights(dto).subscribe({
       next: (res) => {
         this.message = res.message || 'Operation successful.';
         this.alertType = 'success';
@@ -76,11 +84,12 @@ export class RightsManagementComponent {
       },
       error: (err) => {
         console.error('Rights update failed:', err);
-        this.message = 'Operation failed.';
+        this.message = err?.error?.message || 'Operation failed.';
         this.alertType = 'error';
         this.cd.detectChanges();
       },
     });
+    this._subs.push(sub2);
   }
 
   resetForm(): void {
@@ -91,5 +100,6 @@ export class RightsManagementComponent {
     this.rights = null;
     this.showform = false;
     this.usedSource = 'OnPrem';
+    this.operationType = 'SendEmailAccess';
   }
 }

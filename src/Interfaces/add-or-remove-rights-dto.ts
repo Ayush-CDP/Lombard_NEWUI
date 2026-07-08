@@ -4,4 +4,6 @@ export interface AddOrRemoveRightsDTO {
     Action : string;
     Rights : string;
     Source: 'OnPrem' | 'Cloud';
+    SendMailAccess?: 'Allow' | 'Deny';
+    GroupOwnershipChange?: 'Allow' | 'Deny';
 }

@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MsalRedirectComponent, MsalService } from '@azure/msal-angular';
 import { appConfig } from './app/app.config';
 import { loaderInterceptor } from './comp/SharedComps/loader/loader-interceptor-interceptor';
+import { authErrorInterceptor } from './app/auth-error-interceptor';
 
 bootstrapApplication(App, {
   providers: [
@@ -16,12 +17,10 @@ bootstrapApplication(App, {
     importProvidersFrom(FormsModule),
     MsalRedirectComponent,
     ...appConfig.providers!,
-    provideHttpClient(withInterceptors([loaderInterceptor]))
+    provideHttpClient(withInterceptors([loaderInterceptor, authErrorInterceptor]))
   ]
 })
-  .then(appRef => {
-    // 🟩 IMPORTANT: initialize MSAL manually for standalone APP
-    const msal = appRef.injector.get(MsalService);
-    msal.instance.initialize();
+  .then(() => {
+    // MSAL initialization is handled in App.ngOnInit to avoid duplicate initialization
   })
   .catch(err => console.error(err));

@@ -13,8 +13,11 @@ import { MsalService } from '@azure/msal-angular';
 export class Dashboard {
   constructor(private msal: MsalService, private router: Router) {}
 
-  logout() {
-    this.msal.logoutPopup();
-    this.router.navigate(['/login']);
-  }
+logout() {
+  this.msal.instance.setActiveAccount(null);
+
+  this.msal.logoutRedirect({
+    postLogoutRedirectUri: window.location.origin + '/login'
+  });
+}
 }

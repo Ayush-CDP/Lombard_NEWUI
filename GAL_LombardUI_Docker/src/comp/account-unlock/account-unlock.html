@@ -1,0 +1,69 @@
+<div class="module-card" *ngIf="hasAccess">
+  <h2 class="module-title">&#128274; Account Unlock</h2>
+
+  <div class="form-row">
+    <input [(ngModel)]="employeeId" placeholder="Enter Employee ID" class="text-input" />
+    <button (click)="getUserDetails()" class="action-btn dark" [disabled]="loading">
+      Get User
+    </button>
+  </div>
+
+  <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>
+
+  <div *ngIf="user" class="result-block">
+    <h4 class="title">User Details</h4>
+    <div class="table-container">
+      <table class="modern-table">
+        <tbody>
+          <tr>
+            <th>Employee ID</th>
+            <td>{{ user.employeeId }}</td>
+          </tr>
+          <tr>
+            <th>Locked</th>
+            <td>
+              <span [class.locked]="user.isLocked">
+                {{ user.isLocked ? 'Yes' : 'No' }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="user.message">
+            <th>Info</th>
+            <td>{{ user.message }}</td>
+          </tr>
+          <tr>
+            <th>Account Status</th>
+            <td
+              [class.enabled]="user.accountStatus === 'Enabled'"
+              [class.disabled]="user.accountStatus === 'Disabled'"
+            >
+              {{ user.accountStatus }}
+            </td>
+          </tr>
+          <tr>
+            <th>Account Expiry Date</th>
+            <td>{{ user.accountExpiry }}</td>
+          </tr>
+          <tr>
+            <th>Password Expiry Date</th>
+            <td>{{ user.passwordStatus }}</td>
+          </tr>
+          <tr *ngIf="user.info">
+            <th>Info</th>
+            <td>{{ user.info }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="btn-row" *ngIf="showunlockbtn">
+    <button
+      (click)="unlockAccount()"
+      class="action-btn primary"
+      [disabled]="loading || !user?.isLocked"
+    >
+      &#128275; Unlock Account
+    </button>
+  </div>
+</div>

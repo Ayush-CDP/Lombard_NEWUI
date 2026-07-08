@@ -1,19 +1,23 @@
 <div class="module-card">
-  <h2 class="module-title">👥 Group Membership</h2>
-  <div style="display: flex; flex-wrap: wrap">
+  <h2 class="module-title">&#128101; Group Membership</h2>
+
+  <div class="form-row">
     <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
-    <label>Select Source:</label>
-    <select [(ngModel)]="source" class="form-control">
-      <option value="OnPrem">On-Prem</option>
-      <option value="Cloud">Cloud</option>
-    </select>
+    <div class="field-group">
+      <label class="field-label">Source</label>
+      <select [(ngModel)]="source" class="form-control">
+        <option value="OnPrem">On-Prem</option>
+        <option value="Cloud">Cloud</option>
+      </select>
+    </div>
     <button (click)="getMembers()" class="action-btn dark">Get Details</button>
   </div>
-  <app-alert [message]="message" [type]="alertType"></app-alert>
+
+  <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>
+
   <div *ngIf="showform">
     <div class="result-block">
       <h4 class="title">Members Details</h4>
-
       <div class="table-container">
         <table class="modern-table">
           <thead>
@@ -25,28 +29,24 @@
           </thead>
           <tbody>
             <tr *ngIf="members">
-              <!-- <td>{{ i + 1 }}</td> -->
               <td>{{ members?.dlName }}</td>
               <td>{{ members?.dlOwner }}</td>
-              <td>{{ this.usedSource }}</td> 
+              <td>{{ this.usedSource }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <br />
-    <!-- <label>Select Source:</label>
-    <select [(ngModel)]="source" class="form-control">
-      <option value="OnPrem">On-Prem</option>
-      <option value="Cloud">Cloud</option>
-    </select> -->
-    <label>Action</label>
-    <br />
-    <select [(ngModel)]="action" class="text-input">
-      <option value="Add">Add</option>
-      <option value="Remove">Remove</option>
-    </select>
-    <input [(ngModel)]="empIDs" placeholder="Enter Emp ID" class="text-input" />
+
+    <div class="form-section">
+      <label class="field-label">Action</label>
+      <select [(ngModel)]="action" class="text-input">
+        <option value="Add">Add</option>
+        <option value="Remove">Remove</option>
+      </select>
+      <label class="field-label">Employee ID(s)</label>
+      <input [(ngModel)]="empIDs" placeholder="Enter Emp ID (comma separated)" class="text-input" />
+    </div>
   </div>
 
   <div class="btn-row">
@@ -58,30 +58,18 @@
     <div class="note-block">
       <h3>NOTE - I</h3>
       <ol>
-        <li>
-          Enter at least three characters of the DL Name for search and click
-          <strong>"Get DL Name"</strong>.
-        </li>
+        <li>Enter at least three characters of the DL Name and click <strong>"Get Details"</strong>.</li>
         <li>Select your respective DL from the search list.</li>
       </ol>
     </div>
-
     <div class="note-block">
       <h3>NOTE - II</h3>
       <ol>
-        <li>
-          Please input required employee / consultant <strong>NT ID</strong> to be added or removed.
-        </li>
+        <li>Please input required employee / consultant <strong>NT ID</strong> to be added or removed.</li>
         <li>For multiple IDs, please use <strong>Comma ","</strong> as a separator.</li>
-        <li>
-          Click on submit button. An automated mail is sent to the owner of the DL for his/her
-          approval and a copy is sent to the Requester, Galupdate.
-        </li>
-        <li>
-          If no Owner is found for the required DL; a mail is sent to Galupdate with details of your
-          request. Please follow up with Galupdate for further processing.
-        </li>
-        <li>Once the request is approved it will take 1 hour for replication on server.</li>
+        <li>An automated mail is sent to the DL owner for approval and a copy is sent to the Requester.</li>
+        <li>If no Owner is found, a mail is sent to Galupdate. Please follow up for further processing.</li>
+        <li>Once approved it will take 1 hour for replication on the server.</li>
       </ol>
     </div>
   </div>

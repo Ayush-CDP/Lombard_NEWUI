@@ -2,6 +2,7 @@ export interface GALResult {
   firstName: string;
   lastName: string;
   grade: string;
+  band?: string;
   initials: string;
   display: string;
   knownAs: string;

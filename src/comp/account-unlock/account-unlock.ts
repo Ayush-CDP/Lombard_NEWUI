@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { AccountUnlockService } from '../../services/account-unlock';
 import { AccountUnlockRequestDTO } from '../../Interfaces/account-unlock-request-dto';
 import { CommonModule } from '@angular/common';
@@ -28,6 +28,12 @@ export class AccountUnlockComponent implements OnInit {
     private auth: Auth
   ) {}
 
+  private _subs: any[] = [];
+
+  ngOnDestroy(): void {
+    this._subs.forEach(s => s?.unsubscribe && s.unsubscribe());
+  }
+
   ngOnInit(): void {
     this.hasAccess = this.auth.hasFeatureAccess();
   }
@@ -40,11 +46,13 @@ export class AccountUnlockComponent implements OnInit {
     this.showunlockbtn = false;
     this.cd.detectChanges();
 
-    this.accountUnlockService.getUserDetails(this.employeeId).subscribe({
+    const sub = this.accountUnlockService.getUserDetails(this.employeeId).subscribe({
       next: (res) => {
         if (!res.success) {
           this.message = res.message || 'User not found.';
           this.alertType = 'error';
+          this.loading = false;
+          this.cd.detectChanges();
           return;
         }
         console.log(res.data);
@@ -66,6 +74,7 @@ export class AccountUnlockComponent implements OnInit {
         this.cd.detectChanges();
       },
     });
+    this._subs.push(sub);
   }
 
  unlockAccount(): void {
@@ -79,7 +88,7 @@ export class AccountUnlockComponent implements OnInit {
   this.loading = true;
   this.cd.detectChanges();
 
-  this.accountUnlockService.unlockAccount(request).subscribe({
+  const sub2 = this.accountUnlockService.unlockAccount(request).subscribe({
     next: (res) => {
       if (res.success) {
         this.message = 'Account unlock request sent successfully.';
@@ -92,13 +101,14 @@ export class AccountUnlockComponent implements OnInit {
       this.resetForm();
       this.cd.detectChanges();
     },
-    error: () => {
-      this.message = 'Unlock failed.';
+    error: (err) => {
+      this.message = err?.error?.message || 'Unlock failed.';
       this.alertType = 'error';
       this.loading = false;
       this.cd.detectChanges();
     }
   });
+  this._subs.push(sub2);
 }
 
 resetForm(): void {

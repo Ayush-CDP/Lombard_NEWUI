@@ -1,0 +1,82 @@
+<div class="module-card">
+  <h2 class="module-title">&#128273; Rights Management</h2>
+
+  <div class="form-row">
+    <div class="field-group">
+      <label class="field-label">Operation Type</label>
+      <select [(ngModel)]="operationType" class="form-control">
+        <option value="SendEmailAccess">Send Email Access</option>
+        <option value="GroupOwnershipChange">Group Ownership Change</option>
+      </select>
+    </div>
+    <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
+    <div class="field-group">
+      <label class="field-label">Source</label>
+      <select [(ngModel)]="source" class="form-control">
+        <option value="OnPrem">On-Prem</option>
+        <option value="Cloud">Cloud</option>
+      </select>
+    </div>
+    <button (click)="getRights()" class="action-btn dark">View Rights</button>
+  </div>
+
+  <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>
+
+  <div *ngIf="showform">
+    <div class="result-block">
+      <h4 class="title">DL Details</h4>
+      <div class="table-container">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>DL Name</th>
+              <th>DL Owner</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="rights">
+              <td>{{ rights?.dlName }}</td>
+              <td>{{ rights?.dlOwner }}</td>
+              <td>{{ this.usedSource }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <label class="input-label">Action</label>
+      <select [(ngModel)]="action" class="select-input">
+        <option value="Add">Add</option>
+        <option value="Remove">Remove</option>
+      </select>
+      <label class="input-label">Rights</label>
+      <input [(ngModel)]="rightsInput" placeholder="Enter rights" class="text-input" />
+    </div>
+
+    <div class="btn-row">
+      <button (click)="modifyRights()" class="action-btn primary">Submit</button>
+    </div>
+  </div>
+
+  <!-- Notes Section -->
+  <div class="notes-container">
+    <div class="note-block">
+      <h3>NOTE - I</h3>
+      <ol>
+        <li>Enter at least three characters of the DL Name and click <strong>"View Rights"</strong>.</li>
+        <li>Select your respective DL from the search list.</li>
+      </ol>
+    </div>
+    <div class="note-block">
+      <h3>NOTE - II</h3>
+      <ol>
+        <li>Enter NT IDs for Add / Remove actions.</li>
+        <li>Use comma "," for multiple values.</li>
+        <li>The DL owner will receive an approval mail.</li>
+        <li>If no owner is found, mail goes to GALUpdate.</li>
+      </ol>
+    </div>
+  </div>
+</div>

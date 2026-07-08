@@ -44,8 +44,8 @@
       <button class="btn reject" (click)="reject()">Reject</button>
     </div>
 
-    <app-alert [message]="message" [type]="alertType"></app-alert>
+    <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>
   </div>
   <app-loader></app-loader>
-  <app-alert [message]="ERRmessage" [type]="alertType"></app-alert>
+  <app-alert [message]="ERRmessage" [type]="alertType" (closed)="ERRmessage=''"></app-alert>
 </div>

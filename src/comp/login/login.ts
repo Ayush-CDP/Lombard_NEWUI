@@ -23,14 +23,20 @@ export class LoginComponent implements OnInit {
     const accounts = this.msal.instance.getAllAccounts();
 
     if (accounts.length > 0) {
-
       this.msal.instance.setActiveAccount(accounts[0]);
-
-      // ✅ Check group
-      //this.auth.loadAccountUnlockPermission();
-
       this.router.navigate(['/dashboard']);
+      return;
     }
+
+    // No account present -> redirect to SSO unless this is a redirect callback
+    if (!this.isInRedirectFlow()) {
+      this.msal.loginRedirect();
+    }
+  }
+
+  private isInRedirectFlow(): boolean {
+    const url = window.location.href;
+    return url.includes('code=') || url.includes('state=') || url.includes('error=');
   }
 
   login(): void {

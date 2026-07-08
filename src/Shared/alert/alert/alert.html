@@ -1,3 +1,4 @@
-<div *ngIf="message" class="alert" [ngClass]="type" style="display: flex; justify-content: space-between;">
-      {{ message }} <span style="cursor: pointer;" (click)="Close()"> X </span>
-    </div>
+<div *ngIf="displayMessage" class="alert" [ngClass]="type" style="display: flex; justify-content: space-between;">
+  <span class="alert-text">{{ displayMessage }}</span>
+  <span style="cursor: pointer;" (click)="Close()" aria-label="Close">✕</span>
+</div>

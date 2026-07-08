@@ -28,6 +28,6 @@ export const routes: Routes = [
       { path: '', redirectTo: 'group-membership', pathMatch: 'full' }
     ]
   },
-  { path: 'approval', component: Approval },
+  { path: 'approval', component: Approval, canActivate: [MsalGuard] },
   { path: '**', redirectTo: 'login' }
 ];
