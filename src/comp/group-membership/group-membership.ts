@@ -52,7 +52,6 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
         this.cd.detectChanges(); // ⭐ FORCE UI UPDATE
       },
       error: (err) => {
-        console.error('GetMembers failed', err);
         this.message = err?.error?.message || 'Failed to fetch members.';
         this.alertType = 'error';
         this.showform = false;
@@ -82,7 +81,6 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
           this.cd.detectChanges();
         },
         error: (err) => {
-          console.error('ModifyMembership failed', err);
           this.message = err?.error?.message || 'Operation failed.';
           this.alertType = 'error';
           this.cd.detectChanges();

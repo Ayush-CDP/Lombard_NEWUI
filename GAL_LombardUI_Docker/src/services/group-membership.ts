@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AddOrRemoveDLMembershipDTO } from '../Interfaces/add-or-remove-dlmembership-dto';
+import { AddOrRemoveDLMembershipDTO } from '../Environments/Interfaces/add-or-remove-dlmembership-dto';
 import { Observable } from 'rxjs';
 import { environment } from '../Environments/environment';
 

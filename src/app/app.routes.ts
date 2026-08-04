@@ -23,8 +23,10 @@ export const routes: Routes = [
     children: [
       { path: 'account-unlock', component: AccountUnlockComponent },
       { path: 'gal-search', component: GalSearchComponent },
-      { path: 'group-membership', component: GroupMembershipComponent },
-      { path: 'rights-management', component: RightsManagementComponent },
+     // { path: 'group-membership', component: GroupMembershipComponent }, /// to avoid unnecessary access to group membership, this route is commented out. It can be uncommented if needed in the future.
+      { path: 'group-membership', redirectTo: 'login'  },
+      // { path: 'rights-management', component: RightsManagementComponent }, /// to avoid unnecessary access to rights management, this route is commented out. It can be uncommented if needed in the future.
+      { path: 'rights-management', redirectTo: 'login' },
       { path: '', redirectTo: 'group-membership', pathMatch: 'full' }
     ]
   },

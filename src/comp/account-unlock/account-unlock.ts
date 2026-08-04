@@ -55,7 +55,6 @@ export class AccountUnlockComponent implements OnInit {
           this.cd.detectChanges();
           return;
         }
-        console.log(res.data);
         this.user = res.data;
         this.alertType = 'success';
 

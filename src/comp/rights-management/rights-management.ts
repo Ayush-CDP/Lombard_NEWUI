@@ -56,7 +56,6 @@ export class RightsManagementComponent {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error('Rights fetch failed:', err);
         this.alertType = 'error';
         this.message = err?.error?.message || 'Failed to fetch rights.';
         this.showform = false;
@@ -83,7 +82,6 @@ export class RightsManagementComponent {
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error('Rights update failed:', err);
         this.message = err?.error?.message || 'Operation failed.';
         this.alertType = 'error';
         this.cd.detectChanges();

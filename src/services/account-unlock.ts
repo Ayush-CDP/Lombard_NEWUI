@@ -15,7 +15,6 @@ export class AccountUnlockService {
   constructor(private http: HttpClient) {}
 
 getUserDetails(employeeId: string): Observable<ApiResponse<AccountUnlockStatus>> {
-  console.log(this.baseUrl);
   return this.http.get<ApiResponse<AccountUnlockStatus>>(
     `${this.baseUrl}/${employeeId}`
   );

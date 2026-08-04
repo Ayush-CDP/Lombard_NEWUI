@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { GroupMembershipService } from '../../services/group-membership';
-import { AddOrRemoveDLMembershipDTO } from '../../Interfaces/add-or-remove-dlmembership-dto';
+import { AddOrRemoveDLMembershipDTO } from '../../Environments/Interfaces/add-or-remove-dlmembership-dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Alert } from '../../Shared/alert/alert/alert';

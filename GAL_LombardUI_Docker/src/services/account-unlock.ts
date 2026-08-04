@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AccountUnlockRequestDTO, AccountUnlockStatus, ApiResponse } from '../Interfaces/account-unlock-request-dto';
+import { AccountUnlockRequestDTO, AccountUnlockStatus, ApiResponse } from '../Environments/Interfaces/account-unlock-request-dto';
 import { environment } from '../Environments/environment';
 
 

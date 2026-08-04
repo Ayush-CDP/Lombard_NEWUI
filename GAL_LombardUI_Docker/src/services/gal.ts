@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GALSearchEnum } from '../Enums/galsearch-enum';
-import { GALResult } from '../Interfaces/GALResult';
+import { GALResult } from '../Environments/Interfaces/GALResult';
 import { environment } from '../Environments/environment';
 
 @Injectable({

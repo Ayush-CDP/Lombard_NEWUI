@@ -23,4 +23,8 @@ bootstrapApplication(App, {
   .then(() => {
     // MSAL initialization is handled in App.ngOnInit to avoid duplicate initialization
   })
-  .catch(err => console.error(err));
+  .catch(() => {
+    // Bootstrap failed. Do not log the raw error object (may contain
+    // tokens / PII). Surface a generic message instead.
+    document.body.innerText = 'Application failed to start. Please contact support.';
+  });

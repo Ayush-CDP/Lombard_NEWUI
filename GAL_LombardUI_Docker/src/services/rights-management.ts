@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AddOrRemoveRightsDTO } from '../Interfaces/add-or-remove-rights-dto';
+import { AddOrRemoveRightsDTO } from '../Environments/Interfaces/add-or-remove-rights-dto';
 import { environment } from '../Environments/environment';
 
 

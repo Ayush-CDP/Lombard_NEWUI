@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { AccountUnlockService } from '../../services/account-unlock';
-import { AccountUnlockRequestDTO } from '../../Interfaces/account-unlock-request-dto';
+import { AccountUnlockRequestDTO } from '../../Environments/Interfaces/account-unlock-request-dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Alert } from '../../Shared/alert/alert/alert';

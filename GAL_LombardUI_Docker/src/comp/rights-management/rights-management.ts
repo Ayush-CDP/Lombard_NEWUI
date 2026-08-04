@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RightsManagementService } from '../../services/rights-management';
-import { AddOrRemoveRightsDTO } from '../../Interfaces/add-or-remove-rights-dto';
+import { AddOrRemoveRightsDTO } from '../../Environments/Interfaces/add-or-remove-rights-dto';
 import { Alert } from '../../Shared/alert/alert/alert';
 import { ValidationService } from '../../services/validation-service';
 import { GroupMembershipService } from '../../services/group-membership';

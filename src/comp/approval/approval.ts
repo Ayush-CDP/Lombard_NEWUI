@@ -61,7 +61,6 @@ export class Approval {
           this.request = null;
         } else if (res.status === 200) {
           this.request = res.data;
-          console.log(this.request);
           if(this.request.event == 'Rights | OnPrem' || this.request.event == 'Rights | Cloud'){
               this.approvalHeader = 'DL Rights Request';
               this.rights = true;

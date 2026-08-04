@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GALSearchEnum } from '../../Enums/galsearch-enum';
 import { Alert } from '../../Shared/alert/alert/alert';
-import { GALResult } from '../../Interfaces/GALResult';
+import { GALResult } from '../../Environments/Interfaces/GALResult';
 
 @Component({
   selector: 'app-gal-search',
