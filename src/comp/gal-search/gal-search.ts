@@ -63,45 +63,71 @@ export class GalSearchComponent {
     this.goToPage(this.currentPage - 1);
   }
 
-  search(): void {
-    if (!this.value.trim()) {
-      this.message = 'Please enter a value.';
-      this.alertType = 'error';
-      return;
-    }
+ search(): void {
+  if (!this.value.trim()) {
+    this.message = 'Please enter a value.';
+    this.alertType = 'error';
+    return;
+  }
 
-    this.resetState();
-    this.isLoading = true;
+  this.resetState();
+  this.isLoading = true;
 
-    const sub = this.galService.search(this.parameter, this.value).subscribe({
-      next: (res) => {
+  console.log('HERE >>>> search started');
+  console.log('parameter:', this.parameter);
+  console.log('value:', this.value);
+
+  const sub = this.galService.search(this.parameter, this.value).subscribe({
+    next: (res) => {
+      console.log('HERE >>>> API RESPONSE:', res);
+      console.log('response type:', typeof res);
+      console.log('is array:', Array.isArray(res));
+
+      try {
         this.results = res;
         this.currentPage = 1;
 
         if (res.length === 1) {
+          console.log('HERE >>>> opening modal');
           this.openModal(res[0]);
         } else if (res.length > 1) {
+          console.log('HERE >>>> multiple results');
+
           this.message = 'Multiple users found. Select one.';
           this.alertType = 'success';
         } else {
+          console.log('HERE >>>> no results');
+
           this.message = 'No matching records found.';
           this.alertType = 'error';
         }
 
         this.isLoading = false;
         this.cd.detectChanges();
-      },
 
-      error: () => {
-        this.currentPage = 1;
-        this.message = 'Search failed (API error)';
-        this.alertType = 'error';
+        console.log('HERE >>>> completed');
+      } catch (err) {
+        console.error('ERROR INSIDE next():', err);
+
         this.isLoading = false;
         this.cd.detectChanges();
-      },
-    });
-    this._subs.push(sub);
-  }
+      }
+    },
+
+    error: (err) => {
+      console.error('API ERROR:', err);
+
+      this.currentPage = 1;
+      this.message = 'Search failed (API error)';
+      this.alertType = 'error';
+      this.isLoading = false;
+
+      this.cd.detectChanges();
+    },
+  });
+
+  this._subs.push(sub);
+}
 
   openModal(user: GALResult) {
     this.selectedUser = user;

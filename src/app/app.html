@@ -1,1 +1,17 @@
+<style id="antiClickjack">body { display: none !important; }</style>
+<script>
+  (function () {
+    if (self === top) {
+      // Page is NOT inside a frame — remove the hide-style and show normally.
+      var style = document.getElementById("antiClickjack");
+      if (style && style.parentNode) {
+        style.parentNode.removeChild(style);
+      }
+    } else {
+      // Page IS being framed — break out by navigating the top window to us.
+      top.location = self.location;
+    }
+  })();
+</script>
+
 <router-outlet></router-outlet>

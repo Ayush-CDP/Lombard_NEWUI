@@ -1,14 +1,15 @@
 export const environment = {
   production: false,
 
-   apiBaseUrl: 'http://localhost:5000/api',
+   //apiBaseUrl: 'http://localhost:5000/api', // orginal port
+   apiBaseUrl: 'http://localhost:7184/api', // clonned port
    //apiBaseUrl: 'http://localhost:5265/api',
   // https://localhost:44329/swagger
 
   msal: {
     clientId: 'b823223e-37c8-4776-a1f3-93f0045a9e2d',
     authority: 'https://login.microsoftonline.com/5a64b65b-19d2-4b0f-b1de-60f30364b163',
-    redirectUri: 'http://localhost:4200'
+    redirectUri: 'http://localhost:4200/'
   }
 
   //  apiBaseUrl: 'http://10.235.84.7:5000/api',

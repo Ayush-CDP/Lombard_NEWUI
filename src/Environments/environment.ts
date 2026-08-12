@@ -1,7 +1,8 @@
 export const environment = {
   production: false,
 
-   apiBaseUrl: 'http://localhost:5000/api',
+   //apiBaseUrl: 'http://localhost:5000/api', //og
+   apiBaseUrl: 'https://localhost:7184/api',//clone
    //apiBaseUrl: 'http://localhost:5265/api',
   // https://localhost:44329/swagger
 

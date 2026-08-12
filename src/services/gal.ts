@@ -22,11 +22,14 @@ export class GALService {
   // }
 
   search(parameter: GALSearchEnum, value: string): Observable<GALResult[]> {
+    console.log("HERE SEARCH >>>>");
   const params = new HttpParams()
     .set('parameter', GALSearchEnum[parameter])
     .set('value', value);
 
-  return this.http.get<GALResult[]>(`${this.baseUrl}/search`, { params });
+  var a= this.http.get<GALResult[]>(`${this.baseUrl}/search`, { params });
+  console.log("HERE SEARCH 2 +" + a.forEach);
+  return a;
 }
 
 }

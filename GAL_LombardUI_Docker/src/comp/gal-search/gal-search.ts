@@ -92,12 +92,14 @@ export class GalSearchComponent {
         this.cd.detectChanges();
       },
 
-      error: () => {
+      error: (error: any) => {
         this.currentPage = 1;
         this.message = 'Search failed (API error)';
         this.alertType = 'error';
         this.isLoading = false;
         this.cd.detectChanges();
+        console.log('Search failed (API error)' + error);
+        console.log('Search failed (API error)' + error.message);
       },
     });
     this._subs.push(sub);

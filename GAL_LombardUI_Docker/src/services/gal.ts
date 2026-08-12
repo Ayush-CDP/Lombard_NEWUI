@@ -25,7 +25,7 @@ export class GALService {
   const params = new HttpParams()
     .set('parameter', GALSearchEnum[parameter])
     .set('value', value);
-
+console.log('API BASE URL: ' + this.baseUrl);
   return this.http.get<GALResult[]>(`${this.baseUrl}/search`, { params });
 }
 

@@ -11,6 +11,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <style id="antiClickjack">body { display: none !important; }</style>
+  <script>
+    (function () {
+      if (self === top) {
+        var style = document.getElementById("antiClickjack");
+        if (style && style.parentNode) style.parentNode.removeChild(style);
+      } else {
+        top.location = self.location;
+      }
+    })();
+  </script>
+
   <app-root></app-root>
 </body>
 </html>
