@@ -5,6 +5,7 @@ export const environment = {
   msal: {
     clientId: 'f75eb10f-3889-48fc-b8e8-106eebbd671b',
     authority: 'https://login.microsoftonline.com/bcb33dcc-236e-4431-8beb-bd065435b8da',
-    redirectUri: 'http://localhost:4200/'
-  }
+    redirectUri: 'http://localhost:4200/',
+    apiScope: 'api://f75eb10f-3889-48fc-b8e8-106eebbd671b/access_as_user'   
+  } 
 };

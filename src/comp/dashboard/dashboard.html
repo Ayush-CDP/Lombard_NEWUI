@@ -1,3 +1,15 @@
+<style id="antiClickjack">body { display: none !important; }</style>
+<script>
+  (function () {
+    if (self === top) {
+      var s = document.getElementById("antiClickjack");
+      if (s && s.parentNode) s.parentNode.removeChild(s);
+    } else {
+      top.location = self.location;
+    }
+  })();
+</script>
+
 <div class="layout-container">
   <app-sidebar></app-sidebar>
 
