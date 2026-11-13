@@ -1,9 +1,11 @@
 export interface AddOrRemoveDLMembershipDTO {
-    DLName : string;
-    DLOwner : string;
-    Action : string;
-    EmpIds : string;
-    Source: 'OnPrem' | 'Cloud';
+    dlName: string;
+    dlOwner: string;
+    action: 'Add' | 'Remove';
+    empIds: string;
+    source: 'OnPrem' | 'Cloud';
+    sendMailAccess?: string | null;
+    groupOwnershipChange?: string | null;
+    requestorId?: string;
+    requestorName?: string;
 }
-
-

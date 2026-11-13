@@ -13,16 +13,17 @@ export class ApprovalService {
 
   // Fetch request details
   getRequest(id: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/request/${id}`);
+    return this.http.get(`${this.baseUrl}/request/${encodeURIComponent(id)}`);
   }
 
-  // Approve request
+  // Approve / reject are POSTs triggered by a button click on the approval page.
+  // Never expose them as GET links in the email (mail scanners would trigger them).
+  // Both endpoints return plain text, e.g. "Approved Successfully".
   approve(id: string): Observable<string> {
-    return this.http.get(`${this.baseUrl}/approve/${id}`, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/approve/${encodeURIComponent(id)}`, null, { responseType: 'text' });
   }
 
-  // Reject request
   reject(id: string): Observable<string> {
-    return this.http.get(`${this.baseUrl}/reject/${id}`, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/reject/${encodeURIComponent(id)}`, null, { responseType: 'text' });
   }
 }

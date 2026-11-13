@@ -6,6 +6,7 @@ import { Alert } from '../../Shared/alert/alert/alert';
 import { ApprovalService } from '../../services/approval';
 import { Loader } from "../SharedComps/loader/loader";
 import { FormsModule } from "@angular/forms";
+import { getApiErrorMessage } from '../../Shared/http-error';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class Approval {
   rights  : boolean = false;
   lock : boolean = false;
   actions : boolean = true;
+  processing = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,6 +45,14 @@ export class Approval {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.queryParamMap.get('id');
+
+    if (!this.id) {
+      this.alertType = 'error';
+      this.ERRmessage = 'Invalid approval link.';
+      this.actions = false;
+      this.cdr.detectChanges();
+      return;
+    }
 
     // ensure user has approval permissions
     if (!this.auth.hasFeatureAccess()) {
@@ -77,7 +87,7 @@ export class Approval {
 
       error: (err) => {
         this.alertType = 'error';
-        this.ERRmessage = err?.error?.message || 'Internal Server Error';
+        this.ERRmessage = getApiErrorMessage(err, 'Internal Server Error');
         this.cdr.detectChanges();
       }
     });
@@ -85,34 +95,50 @@ export class Approval {
   }
 
   approve() {
-    this.approvalService.approve(this.id).subscribe({
-      next: (res) => {
-        this.message = res;
-        this.actions = false;
-        this.alertType = res === 'Approved Successfully' ? 'success' : 'error';
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.message = err?.error?.message || 'Approval failed.';
-        this.alertType = 'error';
-        this.cdr.detectChanges();
-      }
-    });
+    this.submitDecision('approve');
   }
 
   reject() {
-    this.approvalService.reject(this.id).subscribe({
+    this.submitDecision('reject');
+  }
+
+  private submitDecision(decision: 'approve' | 'reject'): void {
+    if (this.processing || !this.id) {
+      return;
+    }
+    this.processing = true;
+
+    const call$ = decision === 'approve'
+      ? this.approvalService.approve(this.id)
+      : this.approvalService.reject(this.id);
+    const expected = decision === 'approve' ? 'Approved Successfully' : 'Rejected Successfully';
+    const fallback = decision === 'approve' ? 'Approval failed.' : 'Rejection failed.';
+
+    const sub = call$.subscribe({
       next: (res) => {
-        this.message = res;
-        this.actions = false;
-        this.alertType = res === 'Rejected Successfully' ? 'success' : 'error';
+        this.processing = false;
+        const text = String(res ?? '').trim();
+        if (text === expected) {
+          this.message = text;
+          this.alertType = 'success';
+          this.actions = false;
+          if (this.request) {
+            this.request.approvalStatus = decision === 'approve' ? 'Approved' : 'Rejected';
+          }
+        } else {
+          // e.g. "500 Server Error" returned as text
+          this.message = text || fallback;
+          this.alertType = 'error';
+        }
         this.cdr.detectChanges();
       },
       error: (err) => {
-        this.message = err?.error?.message || 'Rejection failed.';
+        this.processing = false;
+        this.message = getApiErrorMessage(err, fallback);
         this.alertType = 'error';
         this.cdr.detectChanges();
       }
     });
+    this._subs.push(sub);
   }
 }

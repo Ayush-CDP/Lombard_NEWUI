@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { Alert } from '../../Shared/alert/alert/alert';
 import { ValidationService } from '../../services/validation-service';
 import { Subject, takeUntil } from 'rxjs';
+import { Auth } from '../../services/auth';
+import { getApiErrorMessage } from '../../Shared/http-error';
 
 @Component({
   selector: 'app-group-membership',
@@ -28,10 +30,13 @@ export class GroupMembershipComponent implements OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  submitting = false;
+
   constructor(
     private groupService: GroupMembershipService,
     private validator: ValidationService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private auth: Auth
   ) {}
 
   getMembers(): void {
@@ -52,7 +57,7 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
         this.cd.detectChanges(); // ⭐ FORCE UI UPDATE
       },
       error: (err) => {
-        this.message = err?.error?.message || 'Failed to fetch members.';
+        this.message = getApiErrorMessage(err, 'Failed to fetch members.');
         this.alertType = 'error';
         this.showform = false;
       },
@@ -60,33 +65,64 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
   }
 
   modifyMembership(): void {
-    this.showform = false;
+    if (this.submitting) {
+      return;
+    }
+
+    const user = this.auth.getCurrentUser();
+    if (!user) {
+      this.message = 'Unable to identify the logged-in user. Please sign in again.';
+      this.alertType = 'error';
+      this.cd.detectChanges();
+      return;
+    }
+
+    const empIds = String(this.empIDs ?? '').trim();
+    if (!empIds) {
+      this.message = 'Please enter at least one Employee / Consultant ID.';
+      this.alertType = 'error';
+      this.cd.detectChanges();
+      return;
+    }
+
     const dto: AddOrRemoveDLMembershipDTO = {
-      DLName: this.members?.dlName,
-      DLOwner: this.members?.dlOwner,
-      Action: this.action,
-      EmpIds: this.empIDs.trim(),
-      Source: this.source,
-      // ApproverEmail: this.userEmail,
+      dlName: this.members?.dlName,
+      dlOwner: this.members?.dlOwner,
+      action: this.action,
+      empIds,
+      // Submit against the source the DL details were actually fetched from.
+      source: this.usedSource,
+      sendMailAccess: null,
+      groupOwnershipChange: null,
+      requestorId: user.id,
+      requestorName: user.name,
     };
 
+    this.submitting = true;
     this.groupService
       .addOrRemoveDLMembership(dto)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          this.message = res.data || 'Operation successful.';
-          this.alertType = 'success';
-          this.resetForm();
+          this.submitting = false;
+          if (res?.success === false) {
+            this.message = res?.message || 'Operation failed.';
+            this.alertType = 'error';
+          } else {
+            this.message = res?.message || (typeof res?.data === 'string' ? res.data : '') || 'Operation successful.';
+            this.alertType = 'success';
+            this.resetForm();
+          }
           this.cd.detectChanges();
         },
         error: (err) => {
-          this.message = err?.error?.message || 'Operation failed.';
+          // Keep the form open so the user can correct the input and retry.
+          this.submitting = false;
+          this.message = getApiErrorMessage(err, 'Operation failed.');
           this.alertType = 'error';
           this.cd.detectChanges();
         },
       });
-
   }
 
   resetForm(): void {

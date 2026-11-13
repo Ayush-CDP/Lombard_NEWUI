@@ -35,6 +35,13 @@
         <th>Is Locked</th>
         <td>{{ request.isLocked }}</td>
       </tr>
+      <tr *ngIf="request.requestorName || request.requestorId">
+        <th>Requested By</th>
+        <td>
+          {{ request.requestorName || request.requestorId }}
+          <span *ngIf="request.requestorName && request.requestorId">({{ request.requestorId }})</span>
+        </td>
+      </tr>
       <tr>
         <th>Action</th>
         <td>{{ request.action }}</td>
@@ -52,8 +59,8 @@
     </table>
 
     <div *ngIf="actions" class="actions">
-      <button class="btn approve" (click)="approve()">Approve</button>
-      <button class="btn reject" (click)="reject()">Reject</button>
+      <button type="button" class="btn approve" [disabled]="processing" (click)="approve()">Approve</button>
+      <button type="button" class="btn reject" [disabled]="processing" (click)="reject()">Reject</button>
     </div>
 
     <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>

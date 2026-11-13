@@ -62,7 +62,7 @@
   </div>
 
   <div class="btn-row">
-    <button *ngIf="showform" (click)="modifyMembership()" class="action-btn primary">Submit</button>
+    <button *ngIf="showform" (click)="modifyMembership()" [disabled]="submitting" class="action-btn primary">Submit</button>
   </div>
 
   <!-- NOTES SECTION -->
