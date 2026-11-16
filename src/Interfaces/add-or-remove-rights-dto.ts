@@ -1,9 +1,12 @@
 export interface AddOrRemoveRightsDTO {
-    DLName : string;
-    DLOwner : string;
-    Action : string;
-    Rights : string;
-    Source: 'OnPrem' | 'Cloud';
-    SendMailAccess?: 'Allow' | 'Deny';
-    GroupOwnershipChange?: 'Allow' | 'Deny';
+    dlName: string;
+    dlOwner: string;
+    action: 'Add' | 'Remove';
+    /** Comma-separated ID(s); each must match [A-Za-z0-9._-]. */
+    rights: string;
+    source: 'OnPrem' | 'Cloud';
+    sendMailAccess?: 'Allow' | 'Deny';
+    groupOwnershipChange?: 'Allow' | 'Deny';
+    requestorId?: string;
+    requestorName?: string;
 }

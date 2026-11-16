@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
+import { environment } from '../Environments/environment';
+import { savePostLoginRedirect } from '../Shared/post-login-redirect';
 
 export interface CurrentUser {
   /** NT / employee ID only (no domain, no "DOMAIN\" prefix), e.g. "lomad". */
@@ -55,6 +57,15 @@ export class Auth {
 
     const name = String(claims.name || account.name || id).trim();
     return { id, name };
+  }
+
+  /**
+   * Starts the Microsoft login redirect and remembers `returnUrl` so the user
+   * is brought back to it afterwards (see LoginComponent).
+   */
+  startLogin(returnUrl: string): void {
+    savePostLoginRedirect(returnUrl);
+    this.msal.loginRedirect({ scopes: [environment.msal.apiScope] });
   }
 
   /** "DOMAIN\\lomad" / "lomad@icicilombard.com" / "lomad" → "lomad". */

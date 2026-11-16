@@ -24,7 +24,10 @@ export class App implements OnInit {
 
     if (result?.account) {
       this.msal.instance.setActiveAccount(result.account);
-      this.router.navigate(['/dashboard']);
+      // No navigation here. If MSAL returned us to the page the user asked for
+      // (e.g. /approval?id=...), stay on it. If we landed on "/", the router
+      // sends us to /login and LoginComponent picks the post-login target.
+      // Navigating to /dashboard here is what used to drop the approval link.
     }
   }
 }

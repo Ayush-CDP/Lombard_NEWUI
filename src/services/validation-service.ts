@@ -40,6 +40,26 @@ export class ValidationService {
     return { isValid: errors.length === 0, errors };
   }
 
+  /**
+   * Comma-separated employee / NT IDs. Mirrors the API rule:
+   * each ID may contain only letters, digits, '.', '_' and '-'.
+   */
+  validateIdList(value: string | null | undefined, label = 'ID'): ValidationResult {
+    const errors: string[] = [];
+    const ids = String(value ?? '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter((x) => x.length > 0);
+
+    if (ids.length === 0) {
+      errors.push(`Please enter at least one ${label}.`);
+    } else if (!ids.every((id) => /^[A-Za-z0-9._-]+$/.test(id))) {
+      errors.push(`One or more ${label}s are invalid. Only letters, digits, '.', '_' and '-' are allowed.`);
+    }
+
+    return { isValid: errors.length === 0, errors };
+  }
+
   validateRights(rights: any): ValidationResult {
     const errors: string[] = [];
 

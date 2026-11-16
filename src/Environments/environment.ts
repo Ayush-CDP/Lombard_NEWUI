@@ -2,7 +2,7 @@ export const environment = {
   production: false,
 
    //apiBaseUrl: 'http://localhost:5000/api', //og
-  //  apiBaseUrl: 'https://localhost:7184/api',//clone
+   apiBaseUrl: 'https://localhost:7184/api',//clone
    //apiBaseUrl: 'http://localhost:5265/api',
   // https://localhost:44329/swagger
 
@@ -12,12 +12,13 @@ export const environment = {
   //   redirectUri: 'http://localhost:4200'
   // }
 
-   apiBaseUrl: 'http://10.235.84.7:5000/api',
+  //  apiBaseUrl: 'http://10.235.84.7:5000/api',
 // lomabrd
   msal: {
     clientId: 'f75eb10f-3889-48fc-b8e8-106eebbd671b',
     authority: 'https://login.microsoftonline.com/bcb33dcc-236e-4431-8beb-bd065435b8da',
     redirectUri: 'http://localhost:4200/',
-    apiScope: 'api://<api-client-id>/access_as_user'   // ← from admin
+    // Must match the API's AzureAd:Audience (LombardAPI_NEW appsettings.json) + scope name.
+    apiScope: 'api://f75eb10f-3889-48fc-b8e8-106eebbd671b/access_as_user'
   }
 };

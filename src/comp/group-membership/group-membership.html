@@ -41,9 +41,9 @@
           </thead>
           <tbody>
             <tr *ngIf="members">
-              <td>{{ members?.dlName }}</td>
-              <td>{{ members?.dlOwner }}</td>
-              <td>{{ this.usedSource }}</td>
+              <td>{{ members.dlName }}</td>
+              <td>{{ members.dlOwner || noOwnerText }}</td>
+              <td>{{ usedSource === 'Cloud' ? 'Cloud' : 'On-Prem' }}</td>
             </tr>
           </tbody>
         </table>

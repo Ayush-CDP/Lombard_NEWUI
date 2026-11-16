@@ -12,10 +12,11 @@
 
 <div class="page-wrapper">
 
-  <div class="approval-container" *ngIf="request">
+  <!-- Request details (only when the API returned the request) -->
+  <div class="approval-container" *ngIf="view === 'ready' && request">
 
     <div class="header">
-      <h2 >{{approvalHeader}}</h2>
+      <h2>{{ approvalHeader }}</h2>
     </div>
 
     <table class="details-table">
@@ -31,7 +32,7 @@
         <th>Rights</th>
         <td>{{ request.rights }}</td>
       </tr>
-       <tr *ngIf="lock">
+      <tr *ngIf="lock">
         <th>Is Locked</th>
         <td>{{ request.isLocked }}</td>
       </tr>
@@ -58,13 +59,29 @@
       </tr>
     </table>
 
-    <div *ngIf="actions" class="actions">
+    <p class="state-note info" *ngIf="statusInfo">{{ statusInfo }}</p>
+
+    <div *ngIf="canDecide" class="actions">
       <button type="button" class="btn approve" [disabled]="processing" (click)="approve()">Approve</button>
       <button type="button" class="btn reject" [disabled]="processing" (click)="reject()">Reject</button>
     </div>
-
-    <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>
   </div>
+
+  <!-- Invalid access / invalid link / session / load error -->
+  <div class="approval-container state-card" *ngIf="view !== 'ready' && view !== 'loading'">
+    <div class="header">
+      <h2 *ngIf="view === 'forbidden'">Invalid access</h2>
+      <h2 *ngIf="view === 'notFound'">Invalid link</h2>
+      <h2 *ngIf="view === 'session'">Sign in required</h2>
+      <h2 *ngIf="view === 'error'">Something went wrong</h2>
+    </div>
+    <p class="state-note" [class.error]="view !== 'session'">{{ stateMessage }}</p>
+    <div class="actions" *ngIf="view === 'session'">
+      <button type="button" class="btn approve" (click)="signInAgain()">Sign in again</button>
+    </div>
+  </div>
+
   <app-loader></app-loader>
-  <app-alert [message]="ERRmessage" [type]="alertType" (closed)="ERRmessage=''"></app-alert>
+  <!-- Approve / reject outcome; stays until closed so the owner can read it. -->
+  <app-alert [message]="message" [type]="alertType" [autoCloseMs]="0" (closed)="message=''"></app-alert>
 </div>

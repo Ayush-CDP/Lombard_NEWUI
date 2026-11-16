@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { Auth } from '../../services/auth';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { consumePostLoginRedirect } from '../../Shared/post-login-redirect';
 
 @Component({
   selector: 'app-login',
@@ -37,8 +38,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         const accounts = this.msal.instance.getAllAccounts();
 
         if (accounts.length > 0) {
-          this.msal.instance.setActiveAccount(accounts[0]);
-          this.router.navigate(['/dashboard']);
+          if (!this.msal.instance.getActiveAccount()) {
+            this.msal.instance.setActiveAccount(accounts[0]);
+          }
+          // Return to the page requested before login (validated internal
+          // path only), otherwise the dashboard.
+          const target = consumePostLoginRedirect() ?? '/dashboard';
+          this.router.navigateByUrl(target);
         } else {
           this.msal.loginRedirect();
         }

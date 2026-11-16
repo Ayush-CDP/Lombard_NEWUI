@@ -13,8 +13,8 @@ export class RightsManagementService {
 
   constructor(private http: HttpClient) {}
 
-  getByDLName(dlName: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${dlName}`);
+  getByDLName(dlName: string, source: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${dlName}?source=${source}`);
   }
 
   addOrRemoveRights(dto: AddOrRemoveRightsDTO): Observable<any> {

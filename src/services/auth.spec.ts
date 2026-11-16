@@ -48,6 +48,18 @@ describe('Auth.getCurrentUser', () => {
     expect(auth.getCurrentUser()).toEqual({ id: 'lomad', name: 'Ad Support' });
   });
 
+  it('startLogin saves the return URL and starts the MSAL redirect', () => {
+    sessionStorage.clear();
+    const msal = TestBed.inject(MsalService) as any;
+    msal.loginRedirect = jasmine.createSpy('loginRedirect');
+
+    auth.startLogin('/approval?id=42');
+
+    expect(sessionStorage.getItem('postLoginRedirect')).toBe('/approval?id=42');
+    expect(msal.loginRedirect).toHaveBeenCalled();
+    sessionStorage.clear();
+  });
+
   it('returns null when the derived ID has invalid characters', () => {
     instance.getActiveAccount.and.returnValue({ username: 'bad id<script>@x.com', idTokenClaims: {} });
     expect(auth.getCurrentUser()).toBeNull();

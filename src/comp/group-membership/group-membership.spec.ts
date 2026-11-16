@@ -32,6 +32,45 @@ describe('GroupMembershipComponent submit', () => {
     component.empIDs = ' ilom32725,ilom41623 ';
   });
 
+  describe('Get Details', () => {
+    const owner = 'AKASH GOWDA /EXT/IT/ICICILOMBARD/BLR (ILOM35124)';
+
+    it('fills DL name, owner and source in the table', async () => {
+      groupService.getByDLName.and.returnValue(of({ success: true, data: { dlName: 'TEST-DL-CRUD-', dlOwner: owner } }));
+      const fixture = TestBed.createComponent(GroupMembershipComponent);
+      const c = fixture.componentInstance;
+      c.dlName = 'TEST-DL-CRUD-';
+      c.source = 'Cloud';
+
+      c.getMembers();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const cells = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody td')).map((td) => td.textContent?.trim());
+      expect(cells).toEqual(['TEST-DL-CRUD-', owner, 'Cloud']);
+    });
+
+    it('shows an error instead of an empty table when the API returns no data', () => {
+      groupService.getByDLName.and.returnValue(of({ success: true, data: null }));
+      component.members = null;
+      component.showform = false;
+      component.dlName = 'TEST-DL-CRUD-';
+
+      component.getMembers();
+
+      expect(component.showform).toBeFalse();
+      expect(component.alertType).toBe('error');
+    });
+
+    it('shows the API message for success:false', () => {
+      groupService.getByDLName.and.returnValue(of({ success: false, message: 'Unable to fetch DL details.' }));
+      component.dlName = 'TEST-DL-CRUD-';
+      component.getMembers();
+      expect(component.message).toBe('Unable to fetch DL details.');
+      expect(component.showform).toBeFalse();
+    });
+  });
+
   it('sends the full payload including the logged-in requestor', () => {
     groupService.addOrRemoveDLMembership.and.returnValue(of({ success: true, message: 'Request submitted.', data: null }));
 

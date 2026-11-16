@@ -136,3 +136,37 @@
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Info / error lines and the invalid-access / invalid-link card */
+.state-note {
+  margin: 20px 0 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  background: #fff8e1;
+  color: #5d4037;
+  border-left: 4px solid #ffb300;
+}
+
+.state-note.error {
+  background: #ffebee;
+  color: #b71c1c;
+  border-left-color: #c62828;
+}
+
+.state-card .header h2 {
+  color: #424242;
+}
+
+/* Stack the card and the outcome alert vertically */
+.page-wrapper {
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-wrapper > app-alert {
+  width: 100%;
+  max-width: 560px;
+}

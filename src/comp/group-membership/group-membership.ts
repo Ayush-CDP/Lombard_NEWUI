@@ -8,6 +8,7 @@ import { ValidationService } from '../../services/validation-service';
 import { Subject, takeUntil } from 'rxjs';
 import { Auth } from '../../services/auth';
 import { getApiErrorMessage } from '../../Shared/http-error';
+import { extractDlDetails, NO_OWNER_TEXT } from '../../Shared/dl-details';
 
 @Component({
   selector: 'app-group-membership',
@@ -31,6 +32,7 @@ export class GroupMembershipComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   submitting = false;
+  readonly noOwnerText = NO_OWNER_TEXT;
 
   constructor(
     private groupService: GroupMembershipService,
@@ -49,19 +51,34 @@ export class GroupMembershipComponent implements OnDestroy {
       return;
     }
 
-this.groupService.getByDLName(this.dlName, this.source).subscribe({
-      next: (res) => {
-        this.members = res.data; // CORRECT
-        this.usedSource = this.source; // Store the source that was used to fetch data
-        this.showform = true;
-        this.cd.detectChanges(); // ⭐ FORCE UI UPDATE
-      },
-      error: (err) => {
-        this.message = getApiErrorMessage(err, 'Failed to fetch members.');
-        this.alertType = 'error';
-        this.showform = false;
-      },
-    });
+    const requestedSource = this.source;
+    this.groupService
+      .getByDLName(this.dlName.trim(), requestedSource)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          const details = extractDlDetails(res);
+          if (res?.success === false || !details) {
+            this.members = null;
+            this.showform = false;
+            this.message = res?.message || 'No details found for this DL. Please check the DL name and source.';
+            this.alertType = 'error';
+            this.cd.detectChanges();
+            return;
+          }
+          this.members = details;
+          this.usedSource = requestedSource; // source the details were fetched from
+          this.showform = true;
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          this.members = null;
+          this.message = getApiErrorMessage(err, 'Failed to fetch members.');
+          this.alertType = 'error';
+          this.showform = false;
+          this.cd.detectChanges();
+        },
+      });
   }
 
   modifyMembership(): void {
@@ -109,7 +126,9 @@ this.groupService.getByDLName(this.dlName, this.source).subscribe({
             this.message = res?.message || 'Operation failed.';
             this.alertType = 'error';
           } else {
-            this.message = res?.message || (typeof res?.data === 'string' ? res.data : '') || 'Operation successful.';
+            // API: "This request has been sent to the DL owner for approval via email."
+            // The fallback only guards against an empty alert if the API omits the message.
+            this.message = res?.message || 'Request submitted.';
             this.alertType = 'success';
             this.resetForm();
           }
