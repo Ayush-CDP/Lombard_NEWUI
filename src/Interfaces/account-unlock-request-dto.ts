@@ -11,8 +11,9 @@ export interface AccountUnlockStatus {
   isLocked: boolean;
   accountStatus: string;     // Enabled / Disabled
   accountExpiry: string;     // Date or "Never"
-  passwordStatus: string;    // Expiry date or "Password Expired"
-  info: string;              // AD info attribute
+  passwordExpiryStatus?: string; // Expiry date or "Password Expired" (current API field)
+  passwordStatus?: string;       // older API name for the same value
+  info?: string;                 // AD info attribute
   message?: string;          // optional (only if backend sends it)
 }
 

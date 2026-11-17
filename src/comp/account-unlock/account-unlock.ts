@@ -6,6 +6,19 @@ import { FormsModule } from '@angular/forms';
 import { Alert } from '../../Shared/alert/alert/alert';
 import { Auth } from '../../services/auth';
 
+const NOT_AVAILABLE = 'Not available';
+
+export interface AccountUnlockView {
+  employeeId: string;
+  isLocked: boolean;
+  accountStatus: string;
+  accountExpiry: string;
+  passwordExpiry: string;
+  /** Optional rows: shown only when present. */
+  info: string;
+  message: string;
+}
+
 @Component({
   selector: 'app-account-unlock',
   imports: [CommonModule, FormsModule, Alert],
@@ -16,7 +29,7 @@ export class AccountUnlockComponent implements OnInit {
   employeeId = '';
   unlock = false;
   message = '';
-  user: any;
+  user: AccountUnlockView | null = null;
   alertType: 'success' | 'error' | 'info' = 'info';
   loading = false;
   showunlockbtn = false;
@@ -55,7 +68,15 @@ export class AccountUnlockComponent implements OnInit {
           this.cd.detectChanges();
           return;
         }
-        this.user = res.data;
+        if (!res.data) {
+          this.user = null;
+          this.message = res.message || 'User not found.';
+          this.alertType = 'error';
+          this.loading = false;
+          this.cd.detectChanges();
+          return;
+        }
+        this.user = AccountUnlockComponent.toView(res.data);
         this.alertType = 'success';
 
         // show unlock only if actually locked
@@ -108,6 +129,27 @@ export class AccountUnlockComponent implements OnInit {
     }
   });
   this._subs.push(sub2);
+}
+
+/**
+ * Maps the API data to what the table shows, so no cell is left blank:
+ * missing values become "Not available" (isLocked stays a boolean).
+ */
+static toView(d: any): AccountUnlockView {
+  const text = (v: unknown): string => {
+    const s = v === null || v === undefined ? '' : String(v).trim();
+    return s || NOT_AVAILABLE;
+  };
+  return {
+    employeeId: text(d?.employeeId),
+    isLocked: d?.isLocked === true,
+    accountStatus: text(d?.accountStatus),
+    accountExpiry: text(d?.accountExpiry),
+    // API sends passwordExpiryStatus; older builds used passwordStatus.
+    passwordExpiry: text(d?.passwordExpiryStatus ?? d?.passwordStatus),
+    info: String(d?.info ?? '').trim(),
+    message: String(d?.message ?? '').trim(),
+  };
 }
 
 resetForm(): void {
