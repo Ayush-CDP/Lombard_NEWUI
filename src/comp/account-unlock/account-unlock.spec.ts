@@ -75,6 +75,28 @@ describe('AccountUnlockComponent user details', () => {
     expect(table()['Password Expiry Date']).toBe('Password Expired');
   });
 
+  it('fills Password Expiry Date from the live API response (passwordStatus, empty info)', async () => {
+    await load({
+      success: true,
+      message: null,
+      data: {
+        employeeId: '1053795',
+        isLocked: false,
+        accountStatus: 'Enabled',
+        accountExpiry: 'Never',
+        passwordStatus: '27 Dec 2026',
+        info: '',
+      },
+    });
+    expect(table()).toEqual({
+      'Employee ID': '1053795',
+      'Locked': 'No',
+      'Account Status': 'Enabled',
+      'Account Expiry Date': 'Never',
+      'Password Expiry Date': '27 Dec 2026',
+    });
+  });
+
   it('shows "Not available" instead of a blank cell for missing values', async () => {
     await load({ success: true, data: { employeeId: 'ILOM35124', isLocked: true, accountStatus: '', accountExpiry: null } });
     const t = table();

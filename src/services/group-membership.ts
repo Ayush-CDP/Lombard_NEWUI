@@ -11,7 +11,8 @@ export class GroupMembershipService {
   constructor(private http: HttpClient) {}
 
 getByDLName(dlName: string, source: string): Observable<any> {
-  return this.http.get(`${this.baseUrl}/${dlName}?source=${source}`);
+  // DL name is a path segment: encode it. Source always goes as a query parameter.
+    return this.http.get(`${this.baseUrl}/${encodeURIComponent(dlName)}`, { params: { source } });
 }
 
   addOrRemoveDLMembership(dto: AddOrRemoveDLMembershipDTO): Observable<any> {

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { GALSearchEnum } from '../../Enums/galsearch-enum';
 import { Alert } from '../../Shared/alert/alert/alert';
 import { GALResult } from '../../Interfaces/GALResult';
+import { getApiErrorMessage } from '../../Shared/http-error';
 
 @Component({
   selector: 'app-gal-search',
@@ -64,6 +65,9 @@ export class GalSearchComponent {
   }
 
  search(): void {
+  if (this.isLoading) {
+    return; // one search at a time (API rate limit)
+  }
   if (!this.value.trim()) {
     this.message = 'Please enter a value.';
     this.alertType = 'error';
@@ -73,30 +77,21 @@ export class GalSearchComponent {
   this.resetState();
   this.isLoading = true;
 
-  console.log('HERE >>>> search started');
-  console.log('parameter:', this.parameter);
-  console.log('value:', this.value);
 
   const sub = this.galService.search(this.parameter, this.value).subscribe({
     next: (res) => {
-      console.log('HERE >>>> API RESPONSE:', res);
-      console.log('response type:', typeof res);
-      console.log('is array:', Array.isArray(res));
 
       try {
         this.results = res;
         this.currentPage = 1;
 
         if (res.length === 1) {
-          console.log('HERE >>>> opening modal');
           this.openModal(res[0]);
         } else if (res.length > 1) {
-          console.log('HERE >>>> multiple results');
 
           this.message = 'Multiple users found. Select one.';
           this.alertType = 'success';
         } else {
-          console.log('HERE >>>> no results');
 
           this.message = 'No matching records found.';
           this.alertType = 'error';
@@ -105,9 +100,7 @@ export class GalSearchComponent {
         this.isLoading = false;
         this.cd.detectChanges();
 
-        console.log('HERE >>>> completed');
       } catch (err) {
-        console.error('ERROR INSIDE next():', err);
 
         this.isLoading = false;
         this.cd.detectChanges();
@@ -115,10 +108,9 @@ export class GalSearchComponent {
     },
 
     error: (err) => {
-      console.error('API ERROR:', err);
 
       this.currentPage = 1;
-      this.message = 'Search failed (API error)';
+      this.message = getApiErrorMessage(err, 'Search failed (API error)');
       this.alertType = 'error';
       this.isLoading = false;
 

@@ -14,7 +14,7 @@
   <h2 class="module-title">&#128101; Group Membership</h2>
 
   <div class="form-row">
-    <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
+    <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" maxlength="256" />
     <div class="field-group">
       <label class="field-label">Source</label>
       <select [(ngModel)]="source" class="form-control">
@@ -22,7 +22,7 @@
         <option value="Cloud">Cloud</option>
       </select>
     </div>
-    <button (click)="getMembers()" class="action-btn dark">Get Details</button>
+    <button (click)="getMembers()" [disabled]="loading" class="action-btn dark">Get Details</button>
   </div>
 
   <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>

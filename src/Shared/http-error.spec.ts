@@ -1,4 +1,29 @@
-import { getApiErrorMessage } from './http-error';
+import { getApiErrorMessage, getFeatureErrorMessage } from './http-error';
+
+describe('getApiErrorMessage (hardened API responses)', () => {
+  it('429 always shows the rate-limit text', () => {
+    expect(getApiErrorMessage({ status: 429, error: null }, 'x')).toBe(
+      'Too many requests. Please wait a few minutes and try again.'
+    );
+  });
+
+  it('never shows an HTML body', () => {
+    expect(getApiErrorMessage({ status: 500, error: '  <html><body>Server Error</body></html>' }, 'x')).toBe(
+      'Service temporarily unavailable. Please try again later.'
+    );
+  });
+
+  it('reads Message and ProblemDetails detail', () => {
+    expect(getApiErrorMessage({ error: { Message: 'Upper-case message' } }, 'x')).toBe('Upper-case message');
+    expect(getApiErrorMessage({ error: { title: 'T', detail: 'D' } }, 'x')).toBe('D');
+    expect(getApiErrorMessage({ error: { title: 'T' } }, 'x')).toBe('T');
+  });
+
+  it('getFeatureErrorMessage: 403 shows a fixed text, others as usual', () => {
+    expect(getFeatureErrorMessage({ status: 403, error: 'raw' }, 'x')).toBe('You do not have access to this feature.');
+    expect(getFeatureErrorMessage({ status: 400, error: { message: 'm' } }, 'x')).toBe('m');
+  });
+});
 
 describe('getApiErrorMessage', () => {
   it('reads message from the { success, message, data } envelope', () => {

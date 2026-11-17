@@ -7,7 +7,7 @@ import { Alert } from '../../Shared/alert/alert/alert';
 import { ValidationService } from '../../services/validation-service';
 import { Subject, takeUntil } from 'rxjs';
 import { Auth } from '../../services/auth';
-import { getApiErrorMessage } from '../../Shared/http-error';
+import { getFeatureErrorMessage } from '../../Shared/http-error';
 import { extractDlDetails, NO_OWNER_TEXT } from '../../Shared/dl-details';
 
 @Component({
@@ -32,6 +32,8 @@ export class GroupMembershipComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   submitting = false;
+  /** Get Details in flight: the button is disabled, so no duplicate calls (API rate limit). */
+  loading = false;
   readonly noOwnerText = NO_OWNER_TEXT;
 
   constructor(
@@ -42,6 +44,9 @@ export class GroupMembershipComponent implements OnDestroy {
   ) {}
 
   getMembers(): void {
+    if (this.loading) {
+      return;
+    }
     const validation = this.validator.validateDLName(this.dlName);
     if (!validation.isValid) {
       this.message = validation.errors.join(' | ');
@@ -52,11 +57,20 @@ export class GroupMembershipComponent implements OnDestroy {
     }
 
     const requestedSource = this.source;
+    const check = this.validator.validateSource(requestedSource);
+    if (!check.isValid) {
+      this.message = check.errors.join(' | ');
+      this.alertType = 'error';
+      return;
+    }
+
+    this.loading = true;
     this.groupService
       .getByDLName(this.dlName.trim(), requestedSource)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
+          this.loading = false;
           const details = extractDlDetails(res);
           if (res?.success === false || !details) {
             this.members = null;
@@ -72,8 +86,9 @@ export class GroupMembershipComponent implements OnDestroy {
           this.cd.detectChanges();
         },
         error: (err) => {
+          this.loading = false;
           this.members = null;
-          this.message = getApiErrorMessage(err, 'Failed to fetch members.');
+          this.message = getFeatureErrorMessage(err, 'Failed to fetch members.');
           this.alertType = 'error';
           this.showform = false;
           this.cd.detectChanges();
@@ -86,21 +101,25 @@ export class GroupMembershipComponent implements OnDestroy {
       return;
     }
 
-    const user = this.auth.getCurrentUser();
-    if (!user) {
-      this.message = 'Unable to identify the logged-in user. Please sign in again.';
+    const idCheck = this.validator.validateIdList(this.empIDs, 'Employee / Consultant ID');
+    const fieldCheck = this.validator.validateSourceAndAction(this.usedSource, this.action);
+    const errors = [...idCheck.errors, ...fieldCheck.errors];
+    if (errors.length) {
+      this.message = errors.join(' | ');
       this.alertType = 'error';
       this.cd.detectChanges();
       return;
     }
 
-    const empIds = String(this.empIDs ?? '').trim();
-    if (!empIds) {
-      this.message = 'Please enter at least one Employee / Consultant ID.';
-      this.alertType = 'error';
-      this.cd.detectChanges();
-      return;
-    }
+    const empIds = String(this.empIDs)
+      .split(',')
+      .map((x) => x.trim())
+      .filter((x) => x.length > 0)
+      .join(',');
+
+    // The API takes the requestor from the token and ignores these;
+    // they are still sent for compatibility. No UI logic depends on them.
+    const user = this.auth.getCurrentUser();
 
     const dto: AddOrRemoveDLMembershipDTO = {
       dlName: this.members?.dlName,
@@ -111,8 +130,8 @@ export class GroupMembershipComponent implements OnDestroy {
       source: this.usedSource,
       sendMailAccess: null,
       groupOwnershipChange: null,
-      requestorId: user.id,
-      requestorName: user.name,
+      requestorId: user?.id,
+      requestorName: user?.name,
     };
 
     this.submitting = true;
@@ -137,7 +156,7 @@ export class GroupMembershipComponent implements OnDestroy {
         error: (err) => {
           // Keep the form open so the user can correct the input and retry.
           this.submitting = false;
-          this.message = getApiErrorMessage(err, 'Operation failed.');
+          this.message = getFeatureErrorMessage(err, 'Operation failed.');
           this.alertType = 'error';
           this.cd.detectChanges();
         },

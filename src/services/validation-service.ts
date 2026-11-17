@@ -5,18 +5,35 @@ export interface ValidationResult {
   errors: string[];
 }
 
+/** Same limits the API enforces. */
+export const DL_NAME_MAX = 256;
+// " “ ” „ ` $ and control characters.
+const DL_NAME_FORBIDDEN = /["“”„`$\u0000-\u001F\u007F]/;
+const ID_PATTERN = /^[A-Za-z0-9._-]{1,64}$/;
+export const SOURCES = ['OnPrem', 'Cloud'] as const;
+export const ACTIONS = ['Add', 'Remove'] as const;
+
 @Injectable({
   providedIn: 'root',
 })
 export class ValidationService {
 
+  /**
+   * DL name. Mirrors the API: required, at most 256 characters, and no
+   * quotes (" “ ” „), backtick, $ or control characters.
+   */
   validateDLName(dlName: string | null | undefined): ValidationResult {
     const errors: string[] = [];
+    const name = String(dlName ?? '').trim();
 
-    if (!dlName || !dlName.trim()) {
+    if (!name) {
       errors.push('DL Name is required.');
-    } else if (dlName.trim().length < 3) {
+    } else if (name.length < 3) {
       errors.push('DL Name must be at least 3 characters.');
+    } else if (name.length > DL_NAME_MAX) {
+      errors.push(`DL Name must be at most ${DL_NAME_MAX} characters.`);
+    } else if (DL_NAME_FORBIDDEN.test(name)) {
+      errors.push('DL name contains invalid characters.');
     }
 
     return { isValid: errors.length === 0, errors };
@@ -42,7 +59,7 @@ export class ValidationService {
 
   /**
    * Comma-separated employee / NT IDs. Mirrors the API rule:
-   * each ID may contain only letters, digits, '.', '_' and '-'.
+   * each ID is 1-64 letters, digits, '.', '_' or '-'.
    */
   validateIdList(value: string | null | undefined, label = 'ID'): ValidationResult {
     const errors: string[] = [];
@@ -53,10 +70,27 @@ export class ValidationService {
 
     if (ids.length === 0) {
       errors.push(`Please enter at least one ${label}.`);
-    } else if (!ids.every((id) => /^[A-Za-z0-9._-]+$/.test(id))) {
-      errors.push(`One or more ${label}s are invalid. Only letters, digits, '.', '_' and '-' are allowed.`);
+    } else if (!ids.every((id) => ID_PATTERN.test(id))) {
+      errors.push(`One or more ${label}s are invalid. Use 1-64 letters, digits, '.', '_' or '-' per ID.`);
     }
 
+    return { isValid: errors.length === 0, errors };
+  }
+
+  /** Source must be OnPrem or Cloud (always sent to the API). */
+  validateSource(source: unknown): ValidationResult {
+    return (SOURCES as readonly unknown[]).includes(source)
+      ? { isValid: true, errors: [] }
+      : { isValid: false, errors: ['Invalid source value. Allowed: OnPrem, Cloud.'] };
+  }
+
+  /** Source must be OnPrem or Cloud; Action must be Add or Remove. */
+  validateSourceAndAction(source: unknown, action: unknown): ValidationResult {
+    const errors: string[] = [];
+    errors.push(...this.validateSource(source).errors);
+    if (!(ACTIONS as readonly unknown[]).includes(action)) {
+      errors.push("Action must be either 'Add' or 'Remove'.");
+    }
     return { isValid: errors.length === 0, errors };
   }
 

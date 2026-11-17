@@ -9,6 +9,7 @@ import { MsalRedirectComponent, MsalService } from '@azure/msal-angular';
 import { appConfig } from './app/app.config';
 import { loaderInterceptor } from './comp/SharedComps/loader/loader-interceptor-interceptor';
 import { authErrorInterceptor } from './app/auth-error-interceptor';
+import { apiErrorInterceptor } from './app/api-error-interceptor';
 
 bootstrapApplication(App, {
   providers: [
@@ -17,7 +18,7 @@ bootstrapApplication(App, {
     importProvidersFrom(FormsModule),
     MsalRedirectComponent,
     ...appConfig.providers!,
-    provideHttpClient(withInterceptors([loaderInterceptor, authErrorInterceptor]))
+    provideHttpClient(withInterceptors([loaderInterceptor, authErrorInterceptor, apiErrorInterceptor]))
   ]
 })
   .then(() => {

@@ -32,7 +32,7 @@
         class="search-input"
         (keyup.enter)="search()"
       />
-      <button (click)="search()" class="search-btn">Search</button>
+      <button (click)="search()" [disabled]="isLoading" class="search-btn">Search</button>
     </div>
 
     <button *ngIf="results.length || message" (click)="clearSearch()" class="clear-link">

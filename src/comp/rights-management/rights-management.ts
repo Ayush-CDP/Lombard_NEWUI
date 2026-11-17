@@ -6,7 +6,7 @@ import { AddOrRemoveRightsDTO } from '../../Interfaces/add-or-remove-rights-dto'
 import { Alert } from '../../Shared/alert/alert/alert';
 import { ValidationService } from '../../services/validation-service';
 import { Auth } from '../../services/auth';
-import { getApiErrorMessage } from '../../Shared/http-error';
+import { getFeatureErrorMessage } from '../../Shared/http-error';
 import { extractDlDetails, NO_OWNER_TEXT } from '../../Shared/dl-details';
 
 @Component({
@@ -28,6 +28,8 @@ export class RightsManagementComponent {
   usedSource: 'OnPrem' | 'Cloud' = 'OnPrem';
   rightsInput: string = '';
   submitting = false;
+  /** View Rights in flight: the button is disabled, so no duplicate calls (API rate limit). */
+  loading = false;
   readonly noOwnerText = NO_OWNER_TEXT;
 
   constructor(
@@ -44,6 +46,9 @@ export class RightsManagementComponent {
   }
 
   getRights(): void {
+    if (this.loading) {
+      return;
+    }
     const validation = this.validator.validateDLName(this.dlName);
 
     if (!validation.isValid) {
@@ -53,8 +58,16 @@ export class RightsManagementComponent {
       return;
     }
     const requestedSource = this.source;
+    const sourceCheck = this.validator.validateSource(requestedSource);
+    if (!sourceCheck.isValid) {
+      this.showError(sourceCheck.errors.join(' | '));
+      return;
+    }
+
+    this.loading = true;
     const sub = this.rightsService.getByDLName(this.dlName.trim(), requestedSource).subscribe({
       next: (res) => {
+        this.loading = false;
         // RightsManagement returns the DL object without a { data } envelope.
         const details = extractDlDetails(res);
         if (!details) {
@@ -69,8 +82,9 @@ export class RightsManagementComponent {
         this.cd.detectChanges();
       },
       error: (err) => {
+        this.loading = false;
         this.alertType = 'error';
-        this.message = getApiErrorMessage(err, 'Failed to fetch rights.');
+        this.message = getFeatureErrorMessage(err, 'Failed to fetch rights.');
         this.showform = false;
         this.cd.detectChanges();
       },
@@ -83,17 +97,17 @@ export class RightsManagementComponent {
       return;
     }
 
-    const user = this.auth.getCurrentUser();
-    if (!user) {
-      this.showError('Unable to identify the logged-in user. Please sign in again.');
+    const idCheck = this.validator.validateIdList(this.rightsInput, 'ID');
+    const fieldCheck = this.validator.validateSourceAndAction(this.usedSource, this.action);
+    const errors = [...idCheck.errors, ...fieldCheck.errors];
+    if (errors.length) {
+      this.showError(errors.join(' | '));
       return;
     }
 
-    const idCheck = this.validator.validateIdList(this.rightsInput, 'ID');
-    if (!idCheck.isValid) {
-      this.showError(idCheck.errors.join(' | '));
-      return;
-    }
+    // The API takes the requestor from the token and ignores these;
+    // they are still sent for compatibility. No UI logic depends on them.
+    const user = this.auth.getCurrentUser();
 
     const rights = String(this.rightsInput)
       .split(',')
@@ -107,8 +121,8 @@ export class RightsManagementComponent {
       action: this.action,
       rights,
       source: this.usedSource,
-      requestorId: user.id,
-      requestorName: user.name,
+      requestorId: user?.id,
+      requestorName: user?.name,
     };
 
     const permission = this.action === 'Add' ? 'Allow' : 'Deny';
@@ -132,7 +146,7 @@ export class RightsManagementComponent {
       error: (err) => {
         // Keep the form open so the user can correct the input and retry.
         this.submitting = false;
-        this.showError(getApiErrorMessage(err, 'Operation failed.'));
+        this.showError(getFeatureErrorMessage(err, 'Operation failed.'));
       },
     });
     this._subs.push(sub2);

@@ -10,6 +10,7 @@ import { GroupMembershipComponent } from '../comp/group-membership/group-members
 import { RightsManagementComponent } from '../comp/rights-management/rights-management';
 import { Approval } from '../comp/approval/approval';
 import { rememberReturnUrlGuard } from './remember-return-url.guard';
+import { featureAccessGuard } from './feature-access.guard';
 
 export const routes: Routes = [
 
@@ -24,8 +25,9 @@ export const routes: Routes = [
     children: [
       { path: 'account-unlock', component: AccountUnlockComponent },
       { path: 'gal-search', component: GalSearchComponent },
-      { path: 'group-membership', component: GroupMembershipComponent }, /// to avoid unnecessary access to group membership, this route is commented out. It can be uncommented if needed in the future.
-      { path: 'rights-management', component: RightsManagementComponent }, /// to avoid unnecessary access to rights management, this route is commented out. It can be uncommented if needed in the future.
+      // Feature.Access only (API answers 403 otherwise); others go to GAL Search.
+      { path: 'group-membership', component: GroupMembershipComponent, canActivate: [featureAccessGuard] },
+      { path: 'rights-management', component: RightsManagementComponent, canActivate: [featureAccessGuard] },
       // { path: 'group-membership', redirectTo: 'login'  },
       // { path: 'rights-management', redirectTo: 'login' }, 
       // { path: '', redirectTo: 'group-membership', pathMatch: 'full' } // any logged-in user who hits /dashboard lands on Group Membership

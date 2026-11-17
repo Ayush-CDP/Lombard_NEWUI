@@ -21,7 +21,9 @@ export class Auth {
   constructor(private msal: MsalService) {}
 
   hasFeatureAccess(): boolean {
-    const account = this.msal.instance.getActiveAccount();
+    // On a page reload the active account may not be set yet; use the signed-in one.
+    const account = this.msal.instance.getActiveAccount()
+      ?? this.msal.instance.getAllAccounts()[0];
     const claims: any = account?.idTokenClaims;
     const roles: string[] = claims?.roles || [];
 

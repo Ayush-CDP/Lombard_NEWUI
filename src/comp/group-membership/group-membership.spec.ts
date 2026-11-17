@@ -127,13 +127,50 @@ describe('GroupMembershipComponent submit', () => {
     expect(component.showform).toBeTrue();
   });
 
-  it('does not submit when the logged-in user cannot be determined', () => {
+  it('still submits when the requestor cannot be read (the API takes it from the token)', () => {
+    groupService.addOrRemoveDLMembership.and.returnValue(of({ success: true, message: 'ok' }));
     auth.getCurrentUser.and.returnValue(null);
 
     component.modifyMembership();
 
+    expect(groupService.addOrRemoveDLMembership.calls.mostRecent().args[0].requestorId).toBeUndefined();
+    expect(component.alertType).toBe('success');
+  });
+
+  it('shows a fixed message on 403 (empty body), never the raw response', () => {
+    groupService.addOrRemoveDLMembership.and.returnValue(throwError(() => ({ status: 403, error: '' })));
+    component.modifyMembership();
+    expect(component.message).toBe('You do not have access to this feature.');
+    expect(component.showform).toBeTrue();
+  });
+
+  it('blocks submit for invalid or too-long IDs', () => {
+    component.empIDs = 'ilom1, bad id!';
+    component.modifyMembership();
+    component.empIDs = 'a'.repeat(65);
+    component.modifyMembership();
     expect(groupService.addOrRemoveDLMembership).not.toHaveBeenCalled();
     expect(component.alertType).toBe('error');
+  });
+
+  it('Get Details: validates the DL name, ignores clicks while loading, shows 403 text', () => {
+    for (const bad of ['a"b-dl', 'a“b-dl', 'a`b-dl', 'a$b-dl', 'x'.repeat(257)]) {
+      component.dlName = bad;
+      component.getMembers();
+    }
+    expect(groupService.getByDLName).not.toHaveBeenCalled();
+
+    component.dlName = 'TEST-DL-CRUD-';
+    component.loading = true;
+    component.getMembers();
+    expect(groupService.getByDLName).not.toHaveBeenCalled();
+
+    component.loading = false;
+    groupService.getByDLName.and.returnValue(throwError(() => ({ status: 403, error: null })));
+    component.getMembers();
+    expect(groupService.getByDLName).toHaveBeenCalledOnceWith('TEST-DL-CRUD-', 'OnPrem');
+    expect(component.message).toBe('You do not have access to this feature.');
+    expect(component.loading).toBeFalse();
   });
 
   it('does not submit when no employee IDs are entered', () => {

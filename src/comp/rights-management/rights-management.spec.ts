@@ -134,10 +134,19 @@ describe('RightsManagementComponent submit', () => {
     expect(component.submitting).toBeFalse();
   });
 
-  it('blocks submit when the logged-in user cannot be identified', () => {
+  it('still submits when the requestor cannot be read (the API takes it from the token)', () => {
+    rightsService.addOrRemoveRights.and.returnValue(of({ success: true, message: apiMsg }));
     auth.getCurrentUser.and.returnValue(null);
     component.modifyRights();
-    expect(rightsService.addOrRemoveRights).not.toHaveBeenCalled();
+    const dto = rightsService.addOrRemoveRights.calls.mostRecent().args[0];
+    expect(dto.requestorId).toBeUndefined();
+    expect(component.alertType).toBe('success');
+  });
+
+  it('shows a fixed message on 403 (empty body), never the raw response', () => {
+    rightsService.addOrRemoveRights.and.returnValue(throwError(() => ({ status: 403, error: '' })));
+    component.modifyRights();
+    expect(component.message).toBe('You do not have access to this feature.');
     expect(component.alertType).toBe('error');
   });
 
@@ -145,7 +154,31 @@ describe('RightsManagementComponent submit', () => {
     component.rightsInput = 'ilom1, bad id!';
     component.modifyRights();
     expect(rightsService.addOrRemoveRights).not.toHaveBeenCalled();
-    expect(component.message).toContain("Only letters, digits, '.', '_' and '-' are allowed.");
+    expect(component.message).toContain("Use 1-64 letters, digits, '.', '_' or '-' per ID.");
+  });
+
+  it('blocks submit for an ID longer than 64 characters', () => {
+    component.rightsInput = 'a'.repeat(65);
+    component.modifyRights();
+    expect(rightsService.addOrRemoveRights).not.toHaveBeenCalled();
+  });
+
+  it('View Rights: blocks invalid DL names, disables the button while loading and shows 403 text', () => {
+    component.dlName = 'Sales$DL';
+    component.getRights();
+    expect(rightsService.getByDLName).not.toHaveBeenCalled();
+    expect(component.message).toBe('DL name contains invalid characters.');
+
+    component.dlName = 'TEST-DL-CRUD-';
+    component.loading = true;
+    component.getRights();
+    expect(rightsService.getByDLName).not.toHaveBeenCalled();
+
+    component.loading = false;
+    rightsService.getByDLName.and.returnValue(throwError(() => ({ status: 403, error: null })));
+    component.getRights();
+    expect(component.message).toBe('You do not have access to this feature.');
+    expect(component.loading).toBeFalse();
   });
 
   it('blocks submit when no IDs are entered', () => {

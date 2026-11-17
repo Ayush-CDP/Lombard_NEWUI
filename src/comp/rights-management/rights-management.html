@@ -21,7 +21,7 @@
         <option value="GroupOwnershipChange">Group Ownership Change</option>
       </select>
     </div>
-    <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" />
+    <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" maxlength="256" />
     <div class="field-group">
       <label class="field-label">Source</label>
       <select [(ngModel)]="source" class="form-control">
@@ -29,7 +29,7 @@
         <option value="Cloud">Cloud</option>
       </select>
     </div>
-    <button (click)="getRights()" class="action-btn dark">View Rights</button>
+    <button (click)="getRights()" [disabled]="loading" class="action-btn dark">View Rights</button>
   </div>
 
   <app-alert [message]="message" [type]="alertType" (closed)="message=''"></app-alert>
