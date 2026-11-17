@@ -20,6 +20,8 @@ export class RightsManagementComponent {
   userEmail = '';
   action: 'Add' | 'Remove' = 'Add';
   operationType: 'SendEmailAccess' | 'GroupOwnershipChange' = 'SendEmailAccess';
+  /** Group Ownership Change is not working yet: the option is shown disabled. Set to true to re-enable. */
+  readonly groupOwnershipChangeEnabled = false;
   message = '';
   rights: any;
   alertType: 'success' | 'error' | 'info' = 'info';
@@ -94,6 +96,11 @@ export class RightsManagementComponent {
 
   modifyRights(): void {
     if (this.submitting) {
+      return;
+    }
+
+    if (this.operationType === 'GroupOwnershipChange' && !this.groupOwnershipChangeEnabled) {
+      this.showError('Group Ownership Change is not available yet. Please use Send Email Access.');
       return;
     }
 

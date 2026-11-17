@@ -18,7 +18,10 @@
       <label class="field-label">Operation Type</label>
       <select [(ngModel)]="operationType" class="form-control">
         <option value="SendEmailAccess">Send Email Access</option>
-        <option value="GroupOwnershipChange">Group Ownership Change</option>
+        <!-- Not working yet: shown but disabled so users know it exists but is unavailable. -->
+        <option value="GroupOwnershipChange" [disabled]="!groupOwnershipChangeEnabled">
+          Group Ownership Change{{ groupOwnershipChangeEnabled ? '' : ' (not available yet)' }}
+        </option>
       </select>
     </div>
     <input [(ngModel)]="dlName" placeholder="DL Name" class="text-input" maxlength="256" />

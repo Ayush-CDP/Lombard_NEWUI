@@ -60,6 +60,7 @@
   </div>
 
   <nav class="sidebar-links">
+    <!-- Account Unlock: admins only (Feature.Access). GAL Search, Group Membership, Rights Management: all users. -->
     <a *ngIf="auth.hasFeatureAccess()" routerLink="account-unlock" routerLinkActive="active">
       <span class="icon">🔓</span>
       <span *ngIf="!isCollapsed">Account Unlock</span>
@@ -70,12 +71,12 @@
       <span *ngIf="!isCollapsed">GAL Search</span>
     </a>
 
-    <a *ngIf="auth.hasFeatureAccess()" routerLink="group-membership" routerLinkActive="active">
+    <a routerLink="group-membership" routerLinkActive="active">
       <span class="icon">👥</span>
       <span *ngIf="!isCollapsed">Group Membership</span>
     </a>
 
-    <a *ngIf="auth.hasFeatureAccess()" routerLink="rights-management" routerLinkActive="active">
+    <a routerLink="rights-management" routerLinkActive="active">
       <span class="icon">🛡️</span>
       <span *ngIf="!isCollapsed">Rights Management</span>
     </a>

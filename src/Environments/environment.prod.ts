@@ -1,6 +1,8 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://10.235.84.7:5000/api',
+  // Same address the live site calls (https, same host as the UI: no mixed content).
+  // Was http://10.235.84.7:5000/api, which had to be hand-edited on the server after each build.
+  apiBaseUrl: 'https://ilcatalog.icicilombard.com/api/api',
 
   msal: {
     clientId: 'f75eb10f-3889-48fc-b8e8-106eebbd671b',

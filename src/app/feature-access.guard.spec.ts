@@ -28,11 +28,13 @@ describe('featureAccessGuard', () => {
     expect(TestBed.inject(Router).serializeUrl(result)).toBe('/dashboard/gal-search');
   });
 
-  it('is on Group Membership and Rights Management, not on /approval', () => {
+  it('is only on Account Unlock: GAL Search, Group Membership, Rights Management and /approval are open', () => {
     const children = routes.find((r) => r.path === 'dashboard')!.children!;
     const guardsOf = (path: string) => children.find((r) => r.path === path)?.canActivate ?? [];
-    expect(guardsOf('group-membership')).toContain(featureAccessGuard);
-    expect(guardsOf('rights-management')).toContain(featureAccessGuard);
+    expect(guardsOf('account-unlock')).toContain(featureAccessGuard);
+    expect(guardsOf('gal-search')).not.toContain(featureAccessGuard);
+    expect(guardsOf('group-membership')).not.toContain(featureAccessGuard);
+    expect(guardsOf('rights-management')).not.toContain(featureAccessGuard);
     expect(routes.find((r) => r.path === 'approval')!.canActivate).not.toContain(featureAccessGuard);
   });
 });

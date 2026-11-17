@@ -108,17 +108,27 @@ describe('RightsManagementComponent submit', () => {
     expect(component.showform).toBeFalse();
   });
 
-  it('Group Ownership Change + Remove sends groupOwnershipChange: Deny', () => {
-    rightsService.addOrRemoveRights.and.returnValue(of({ message: apiMsg }));
+  it('Group Ownership Change is disabled: not sent, and the user is told it is unavailable', () => {
     component.operationType = 'GroupOwnershipChange';
     component.action = 'Remove';
 
     component.modifyRights();
 
-    const dto = rightsService.addOrRemoveRights.calls.mostRecent().args[0];
-    expect(dto.groupOwnershipChange).toBe('Deny');
-    expect(dto.sendMailAccess).toBeUndefined();
-    expect(dto.action).toBe('Remove');
+    expect(rightsService.addOrRemoveRights).not.toHaveBeenCalled();
+    expect(component.alertType).toBe('error');
+    expect(component.message).toBe('Group Ownership Change is not available yet. Please use Send Email Access.');
+  });
+
+  it('shows Group Ownership Change as a disabled "(not available yet)" option', async () => {
+    const fixture = TestBed.createComponent(RightsManagementComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const opt = (fixture.nativeElement as HTMLElement).querySelector(
+      'option[value="GroupOwnershipChange"]'
+    ) as HTMLOptionElement;
+    expect(opt.disabled).toBeTrue();
+    expect(opt.textContent?.trim()).toBe('Group Ownership Change (not available yet)');
+    expect(fixture.componentInstance.operationType).toBe('SendEmailAccess');
   });
 
   it('shows the API 400 message and keeps the form open', () => {

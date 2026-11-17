@@ -23,11 +23,12 @@ export const routes: Routes = [
     component: Dashboard,
     canActivate: [MsalGuard],
     children: [
-      { path: 'account-unlock', component: AccountUnlockComponent },
+      // Account Unlock: admins only (Feature.Access); others go to GAL Search.
+      { path: 'account-unlock', component: AccountUnlockComponent, canActivate: [featureAccessGuard] },
       { path: 'gal-search', component: GalSearchComponent },
-      // Feature.Access only (API answers 403 otherwise); others go to GAL Search.
-      { path: 'group-membership', component: GroupMembershipComponent, canActivate: [featureAccessGuard] },
-      { path: 'rights-management', component: RightsManagementComponent, canActivate: [featureAccessGuard] },
+      // GAL Search, Group Membership and Rights Management: all signed-in users.
+      { path: 'group-membership', component: GroupMembershipComponent },
+      { path: 'rights-management', component: RightsManagementComponent },
       // { path: 'group-membership', redirectTo: 'login'  },
       // { path: 'rights-management', redirectTo: 'login' }, 
       // { path: '', redirectTo: 'group-membership', pathMatch: 'full' } // any logged-in user who hits /dashboard lands on Group Membership
